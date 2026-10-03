@@ -102,7 +102,9 @@ end
 function Render.visible(config, line)
     local text = line:gsub('<img[^>]*>', function(tag)
         local img = config.tag.img
-        local alt = img and img.attribute and Render.attribute(tag, img.attribute)
+        local alt = img
+            and img.attribute
+            and Render.attribute(tag, img.attribute)
         return (img and img.icon or '') .. (alt or '')
     end)
     text = text:gsub('<[^>]*>', '')
