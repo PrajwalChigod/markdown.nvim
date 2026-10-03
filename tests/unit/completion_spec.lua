@@ -41,12 +41,12 @@ describe('completions', function()
         '> text',
     }
 
-    ---@param row render.md.test.Row
+    ---@param row renderer.test.Row
     ---@param n integer
     ---@param col integer
     ---@param expected lsp.CompletionItem[]
     local function validate(row, n, col, expected)
-        local source = require('render-markdown.integ.source')
+        local source = require('renderer.integ.source')
         local actual = source.items(0, row:get(n)[1], col) or {}
         table.sort(actual, function(a, b)
             return a.label < b.label

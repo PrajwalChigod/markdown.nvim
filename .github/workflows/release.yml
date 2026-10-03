@@ -16,7 +16,7 @@ jobs:
 
       - name: Check version
         run: |
-          version=$(sed -n "s/^M.version = '\(.*\)'$/\1/p" lua/render-markdown/health.lua)
+          version=$(sed -n "s/^M.version = '\(.*\)'$/\1/p" lua/renderer/health.lua)
           if [ "$version" != "$GITHUB_REF_NAME" ]; then
             echo "::error::tag $GITHUB_REF_NAME does not match health.lua version $version"
             exit 1

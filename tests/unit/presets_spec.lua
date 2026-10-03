@@ -1,10 +1,10 @@
 ---@module 'luassert'
 
 describe('presets', function()
-    ---@param user render.md.UserConfig
-    ---@param expected render.md.UserConfig
+    ---@param user renderer.UserConfig
+    ---@param expected renderer.UserConfig
     local function validate(user, expected)
-        local actual = require('render-markdown.lib.presets').get(user)
+        local actual = require('renderer.lib.presets').get(user)
         assert.same(expected, actual)
     end
 

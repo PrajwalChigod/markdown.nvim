@@ -1,16 +1,16 @@
----@class render.md.test.Marks
----@field private marks render.md.test.MarkInfo[]
+---@class renderer.test.Marks
+---@field private marks renderer.test.MarkInfo[]
 local Marks = {}
 Marks.__index = Marks
 
----@return render.md.test.Marks
+---@return renderer.test.Marks
 function Marks.new()
     local self = setmetatable({}, Marks)
     self.marks = {}
     return self
 end
 
----@return render.md.test.MarkInfo[]
+---@return renderer.test.MarkInfo[]
 function Marks:get()
     table.sort(self.marks, function(a, b)
         return require('tests.helpers.details').__lt(a, b)
@@ -18,18 +18,18 @@ function Marks:get()
     return self.marks
 end
 
----@param other render.md.test.Marks
----@return render.md.test.Marks
+---@param other renderer.test.Marks
+---@return renderer.test.Marks
 function Marks:extend(other)
     vim.list_extend(self.marks, other.marks)
     return self
 end
 
----@param row render.md.test.Range|integer
----@param col render.md.test.Range|integer
+---@param row renderer.test.Range|integer
+---@param col renderer.test.Range|integer
 ---@param opts vim.api.keyset.set_extmark
 function Marks:add(row, col, opts)
-    ---@type render.md.test.MarkInfo
+    ---@type renderer.test.MarkInfo
     ---@diagnostic disable-next-line: assign-type-mismatch
     local mark = opts
     mark.row = Marks.range(row)
@@ -38,13 +38,13 @@ function Marks:add(row, col, opts)
 end
 
 ---@private
----@param r render.md.test.Range|integer
----@return render.md.test.Range
+---@param r renderer.test.Range|integer
+---@return renderer.test.Range
 function Marks.range(r)
     if type(r) == 'table' then
         return r
     elseif type(r) == 'number' then
-        ---@type render.md.test.Range
+        ---@type renderer.test.Range
         return { r }
     else
         error(('invalid range type: %s'):format(type(r)))

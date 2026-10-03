@@ -1,12 +1,12 @@
 ---@module 'luassert'
 
-local View = require('render-markdown.request.view')
+local View = require('renderer.request.view')
 local mock = require('luassert.mock')
 
 describe('view', function()
-    ---@param ranges table<integer, render.md.Range>
+    ---@param ranges table<integer, renderer.Range>
     local function setup(ranges)
-        local env = mock(require('render-markdown.lib.env'), true)
+        local env = mock(require('renderer.lib.env'), true)
         env.buf.wins.on_call_with(0).returns(vim.tbl_keys(ranges))
         for win, range in pairs(ranges) do
             env.range.on_call_with(0, win, 10).returns(range)

@@ -18,7 +18,7 @@ vim.pack.add({
     'https://github.com/nvim-lualine/lualine.nvim',
 })
 
-vim.cmd.packadd('render-markdown.nvim')
+vim.cmd.packadd('renderer.nvim')
 
 ---@diagnostic disable-next-line: missing-fields
 require('tokyonight').setup({ style = 'night' })
@@ -51,4 +51,4 @@ require('lualine').setup({
     },
 })
 
-require('render-markdown').setup({})
+require('renderer').setup({})

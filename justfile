@@ -9,7 +9,7 @@ update:
   # https://github.com/kdheepak/panvimdoc
   ../../../tools/panvimdoc/panvimdoc.sh \
     --input-file README.md \
-    --project-name render-markdown \
+    --project-name renderer \
     --description "Improve viewing Markdown in Neovim"
 
 check:
@@ -32,10 +32,10 @@ busted path:
     -c "PlenaryBustedDirectory {{path}} {{settings}}"
 
 health:
-  nvim -c "checkhealth render-markdown" -- -
+  nvim -c "checkhealth renderer" -- -
 
 log:
-  cat ~/.local/state/nvim/render-markdown.log
+  cat ~/.local/state/nvim/renderer.log
 
 demo: heading table quote callout latex
 

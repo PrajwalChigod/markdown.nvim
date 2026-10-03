@@ -37,7 +37,7 @@ describe('code', function()
 
     local width = { 30, 16, 16, 22 + tab }
 
-    ---@return render.md.test.Marks
+    ---@return renderer.test.Marks
     local function shared()
         local marks, row = util.marks(), util.row()
 

@@ -5,13 +5,13 @@ inside buffers using treesitter and extmarks. Requires neovim >= 0.12.
 
 ## Layout
 
-- `plugin/render-markdown.lua`: entry point, version guard
-- `lua/render-markdown/settings.lua`: all config defaults, types and schemas
-- `lua/render-markdown/handler/`: one handler per treesitter language, runs
+- `plugin/renderer.lua`: entry point, version guard
+- `lua/renderer/settings.lua`: all config defaults, types and schemas
+- `lua/renderer/handler/`: one handler per treesitter language, runs
   queries and dispatches captures to renderers
-- `lua/render-markdown/render/`: renderers grouped by language, each extends
+- `lua/renderer/render/`: renderers grouped by language, each extends
   `render/base.lua` with `setup()` and `run()`
-- `lua/render-markdown/core/colors.lua`: `RenderMarkdown*` highlight groups
+- `lua/renderer/core/colors.lua`: `Renderer*` highlight groups
 - `tests/`: plenary busted specs, `tests/util.lua` holds helpers
 
 ## Commands
@@ -37,7 +37,7 @@ without the minimal init and every render spec fails.
 
 - Format with `stylua` (80 columns, 4 spaces, single quotes)
 - Config changes go in `settings.lua` first, then mirror them into the
-  `README.md` and `doc/render-markdown.txt` config blocks
+  `README.md` and `doc/renderer.txt` config blocks
 - New highlight groups go in `core/colors.lua` and the README highlight table
 - Add specs for new rendering behavior, asserting both marks and screen
 - Add user facing changes under `## Pre-release` in `CHANGELOG.md`

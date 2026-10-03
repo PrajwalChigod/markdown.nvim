@@ -1,25 +1,25 @@
 ---@module 'luassert'
 
----@class render.md.test.Range
+---@class renderer.test.Range
 ---@field [1] integer
 ---@field [2]? integer
 
----@class render.md.test.MarkInfo: render.md.mark.Opts
----@field row render.md.test.Range
----@field col render.md.test.Range
+---@class renderer.test.MarkInfo: renderer.mark.Opts
+---@field row renderer.test.Range
+---@field col renderer.test.Range
 
----@class render.md.test.Util
+---@class renderer.test.Util
 local M = {}
 
----@class render.md.test.util.Setup
+---@class renderer.test.util.Setup
 M.setup = {}
 
 ---@private
----@param opts? render.md.UserConfig
+---@param opts? renderer.UserConfig
 function M.setup.init(opts)
     require('luassert.assert'):set_parameter('TableFormatLevel', 4)
     require('luassert.assert'):set_parameter('TableErrorHighlightColor', 'none')
-    ---@type render.md.UserConfig
+    ---@type renderer.UserConfig
     local test_config = {
         anti_conceal = { enabled = false },
         win_options = { concealcursor = { rendered = 'nvic' } },
@@ -30,11 +30,11 @@ function M.setup.init(opts)
         },
     }
     local config = vim.tbl_deep_extend('force', test_config, opts or {})
-    require('render-markdown').setup(config)
+    require('renderer').setup(config)
 end
 
 ---@param file string
----@param opts? render.md.UserConfig
+---@param opts? renderer.UserConfig
 function M.setup.file(file, opts)
     M.setup.init(opts)
     vim.cmd('e ' .. file)
@@ -42,7 +42,7 @@ function M.setup.file(file, opts)
 end
 
 ---@param lines string[]
----@param opts? render.md.UserConfig
+---@param opts? renderer.UserConfig
 function M.setup.text(lines, opts)
     M.setup.init(opts)
     local buf = vim.api.nvim_create_buf(false, true)
@@ -100,7 +100,7 @@ end
 ---@param icon? string
 ---@return vim.api.keyset.set_extmark
 function M.checkbox(kind, space, icon)
-    local line = {} ---@type render.md.mark.Line
+    local line = {} ---@type renderer.mark.Line
     if kind == 'checked' then
         line[#line + 1] = { icon or '󰱒 ', 'RmChecked' }
     elseif kind == 'unchecked' then
@@ -189,7 +189,7 @@ function M.padding(spaces, opts)
     }
 end
 
----@class render.md.test.Indent
+---@class renderer.test.Indent
 M.indent = {}
 
 ---@param lengths integer[]
@@ -215,9 +215,9 @@ end
 
 ---@private
 ---@param lengths integer[]
----@return render.md.mark.Line
+---@return renderer.mark.Line
 function M.indent.line(lengths)
-    local result = {} ---@type render.md.mark.Line
+    local result = {} ---@type renderer.mark.Line
     for _, length in ipairs(lengths) do
         if length == 1 then
             result[#result + 1] = { '▎', 'RmIndent' }
@@ -228,7 +228,7 @@ function M.indent.line(lengths)
     return result
 end
 
----@class render.md.test.Heading
+---@class renderer.test.Heading
 M.heading = {}
 
 ---@param level integer
@@ -264,10 +264,10 @@ function M.heading.bg(level)
     }
 end
 
----@class render.md.test.Code
+---@class renderer.test.Code
 M.code = {}
 
----@param name render.md.test.Language
+---@param name renderer.test.Language
 ---@return vim.api.keyset.set_extmark
 function M.code.sign(name)
     local icon = assert(M.code.icon(name))
@@ -280,7 +280,7 @@ end
 
 ---@param border string
 ---@param full boolean
----@param ... render.md.test.Language|string|integer
+---@param ... renderer.test.Language|string|integer
 ---@return vim.api.keyset.set_extmark
 function M.code.border(border, full, ...)
     local parts = { ... }
@@ -289,7 +289,7 @@ function M.code.border(border, full, ...)
         parts[#parts] = parts[#parts] + vim.o.columns
     end
 
-    local line = {} ---@type render.md.mark.Line
+    local line = {} ---@type renderer.mark.Line
     for _, part in ipairs(parts) do
         if type(part) == 'string' then
             local icon = M.code.icon(part)
@@ -313,24 +313,24 @@ function M.code.border(border, full, ...)
     }
 end
 
----@alias render.md.test.Language 'lua'|'py'|'python'|'rs'|'rust'
+---@alias renderer.test.Language 'lua'|'py'|'python'|'rs'|'rust'
 
----@class render.md.test.Icon
+---@class renderer.test.Icon
 ---@field [1] string
 ---@field [2] string
 
 ---@private
----@param name render.md.test.Language
----@return render.md.test.Icon?
+---@param name renderer.test.Language
+---@return renderer.test.Icon?
 function M.code.icon(name)
     if name == 'lua' then
-        ---@type render.md.test.Icon
+        ---@type renderer.test.Icon
         return { '󰢱 ', 'MiniIconsAzure' }
     elseif name == 'py' or name == 'python' then
-        ---@type render.md.test.Icon
+        ---@type renderer.test.Icon
         return { '󰌠 ', 'MiniIconsYellow' }
     elseif name == 'rs' or name == 'rust' then
-        ---@type render.md.test.Icon
+        ---@type renderer.test.Icon
         return { '󱘗 ', 'MiniIconsOrange' }
     else
         return nil
@@ -370,7 +370,7 @@ function M.code.padding(kind, spaces)
     })
 end
 
----@class render.md.test.Table
+---@class renderer.test.Table
 M.table = {}
 
 ---@param head boolean
@@ -453,14 +453,14 @@ function M.set_row(row, scroll_to_top)
     vim.wait(0)
 end
 
----@param marks render.md.test.Marks
+---@param marks renderer.test.Marks
 ---@param screen string[]
 function M.assert_view(marks, screen)
     M.assert_marks(marks:get())
     M.assert_screen(screen)
 end
 
----@param expected render.md.test.MarkInfo[]
+---@param expected renderer.test.MarkInfo[]
 function M.assert_marks(expected)
     local actual = M.actual_marks()
     for i = 1, math.min(#expected, #actual) do
@@ -471,13 +471,13 @@ function M.assert_marks(expected)
 end
 
 ---@private
----@return render.md.test.MarkInfo[]
+---@return renderer.test.MarkInfo[]
 function M.actual_marks()
-    local ui = require('render-markdown.core.ui')
+    local ui = require('renderer.core.ui')
     local marks = vim.api.nvim_buf_get_extmarks(0, ui.ns, 0, -1, {
         details = true,
     })
-    local actual = {} ---@type render.md.test.MarkDetails[]
+    local actual = {} ---@type renderer.test.MarkDetails[]
     for _, mark in ipairs(marks) do
         local row, col = mark[2], mark[3]
         local details = assert(mark[4], 'missing details')

@@ -16,7 +16,7 @@ describe('table', function()
         '| Item 1    | Item 2    |',
     }
 
-    ---@return render.md.test.Marks
+    ---@return renderer.test.Marks
     local function shared()
         local marks, row = util.marks(), util.row()
 
@@ -38,7 +38,7 @@ describe('table', function()
         return marks
     end
 
-    ---@return render.md.test.Marks
+    ---@return renderer.test.Marks
     local function pipes()
         local marks, row = util.marks(), util.row()
 

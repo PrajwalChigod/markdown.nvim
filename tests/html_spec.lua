@@ -109,7 +109,7 @@ describe('html', function()
             return false
         end)
         vim.o.columns = 40
-        require('render-markdown.core.ui').update(buf, win, 'WinResized', true)
+        require('renderer.core.ui').update(buf, win, 'WinResized', true)
         vim.wait(500, function()
             return false
         end)

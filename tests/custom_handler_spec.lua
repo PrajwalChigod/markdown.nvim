@@ -8,10 +8,10 @@ describe('custom handler', function()
         '\\$1.50 \\$3.55',
     }
 
-    ---@param ctx render.md.handler.Context
-    ---@return render.md.Mark[]
+    ---@param ctx renderer.handler.Context
+    ---@return renderer.Mark[]
     local function handler(ctx)
-        local marks = {} ---@type render.md.Mark[]
+        local marks = {} ---@type renderer.Mark[]
         local buf_lines = vim.api.nvim_buf_get_lines(ctx.buf, 0, -1, false)
         for row, line in ipairs(buf_lines) do
             local index = 1 ---@type integer?

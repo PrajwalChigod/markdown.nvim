@@ -2,13 +2,13 @@
 
 local stub = require('luassert.stub')
 
----@class render.md.test.Task: vim.SystemObj
+---@class renderer.test.Task: vim.SystemObj
 ---@field private stdout string
 local Task = {}
 Task.__index = Task
 
 ---@param stdout string
----@return render.md.test.Task
+---@return renderer.test.Task
 function Task.new(stdout)
     local self = setmetatable({}, Task)
     self.stdout = stdout
@@ -21,7 +21,7 @@ function Task:wait()
     return { code = 0, signal = 0, stdout = self.stdout }
 end
 
----@class render.md.test.System
+---@class renderer.test.System
 local M = {}
 
 ---@param command string
