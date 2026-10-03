@@ -99,4 +99,29 @@ describe('html', function()
         marks:add({ 2, 2 }, { 0, 4 }, util.conceal())
         util.assert_view(marks, { '', '  ' .. (' '):rep(39) .. 'hi', '' })
     end)
+
+    it('align center follows window resize', function()
+        util.setup.text({ '<h1 align="center">rift.nvim</h1>' })
+        local buf = vim.api.nvim_get_current_buf()
+        local win = vim.api.nvim_get_current_win()
+        -- wait out the debounce window so the next update is not dropped
+        vim.wait(500, function()
+            return false
+        end)
+        vim.o.columns = 40
+        require('render-markdown.core.ui').update(buf, win, 'WinResized', true)
+        vim.wait(500, function()
+            return false
+        end)
+        local marks = util.marks()
+        marks:add(0, 0, {
+            virt_text = { { (' '):rep(15), 'Normal' } },
+            virt_text_pos = 'inline',
+        })
+        marks:add({ 0, 0 }, { 0, 18 }, util.conceal())
+        marks:add({ 0, 0 }, { 18, 27 }, { hl_eol = false, hl_group = 'RmH1' })
+        marks:add({ 0, 0 }, { 27, 32 }, util.conceal())
+        util.assert_view(marks, { (' '):rep(15) .. 'rift.nvim' })
+        vim.o.columns = 80
+    end)
 end)
