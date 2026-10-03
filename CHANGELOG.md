@@ -2,6 +2,12 @@
 
 ## Pre-release
 
+## 0.1.0 (2026-10-03)
+
+First release of this fork, based on
+[render-markdown.nvim](https://github.com/MeanderingProgrammer/render-markdown.nvim) 8.14.0.
+Entries below 0.1.0 are the upstream history.
+
 ### Breaking Changes
 
 - require neovim >= 0.12, support for older versions is dropped along with the compatibility layer

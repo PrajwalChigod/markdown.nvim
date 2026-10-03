@@ -1,5 +1,5 @@
 *render-markdown.txt*                       Improve viewing Markdown in Neovim
-                            For NVIM v0.12.5    Last change: 2026 September 14
+                            For NVIM v0.12.5    Last change: 2026 October 03
 
 ==============================================================================
 Table of Contents                          *render-markdown-table-of-contents*
@@ -10,7 +10,6 @@ Table of Contents                          *render-markdown-table-of-contents*
 4. Install                                           |render-markdown-install|
   - vim.pack                                |render-markdown-install-vim.pack|
   - lazy.nvim                              |render-markdown-install-lazy.nvim|
-  - rocks.nvim                            |render-markdown-install-rocks.nvim|
   - packer.nvim                          |render-markdown-install-packer.nvim|
 5. Commands                                         |render-markdown-commands|
 6. Completions                                   |render-markdown-completions|
@@ -107,7 +106,7 @@ VIM.PACK                                    *render-markdown-install-vim.pack*
         'https://github.com/nvim-mini/mini.nvim',            -- if you use the mini.nvim suite
         -- 'https://github.com/nvim-mini/mini.icons',        -- if you use standalone mini plugins
         -- 'https://github.com/nvim-tree/nvim-web-devicons', -- if you prefer nvim-web-devicons
-        'https://github.com/MeanderingProgrammer/render-markdown.nvim',
+        'https://github.com/PrajwalChigod/markdown.nvim',
     })
     require('render-markdown').setup({}) -- only mandatory if you want to set custom options
 <
@@ -117,7 +116,8 @@ LAZY.NVIM                                  *render-markdown-install-lazy.nvim*
 
 >lua
     {
-        'MeanderingProgrammer/render-markdown.nvim',
+        'PrajwalChigod/markdown.nvim',
+        main = 'render-markdown',
         dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.nvim' },            -- if you use the mini.nvim suite
         -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.icons' },        -- if you use standalone mini plugins
         -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
@@ -128,21 +128,11 @@ LAZY.NVIM                                  *render-markdown-install-lazy.nvim*
 <
 
 
-ROCKS.NVIM                                *render-markdown-install-rocks.nvim*
-
-This plugin is available on LuaRocks
-<https://luarocks.org/modules/MeanderingProgrammer/render-markdown.nvim>
-
->vim
-    :Rocks install render-markdown.nvim
-<
-
-
 PACKER.NVIM                              *render-markdown-install-packer.nvim*
 
 >lua
     use({
-        'MeanderingProgrammer/render-markdown.nvim',
+        'PrajwalChigod/markdown.nvim',
         after = { 'nvim-treesitter' },
         requires = { 'nvim-mini/mini.nvim', opt = true },            -- if you use the mini.nvim suite
         -- requires = { 'nvim-mini/mini.icons', opt = true },        -- if you use standalone mini plugins
