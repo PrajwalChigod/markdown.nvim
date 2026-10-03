@@ -5,11 +5,6 @@ local Base = require('render-markdown.render.base')
 local Render = setmetatable({}, Base)
 Render.__index = Render
 
----HTML elements without an end tag
----@private
----@type table<string, boolean>
-Render.void = { br = true, hr = true, img = true, input = true, wbr = true }
-
 ---@protected
 ---@return boolean
 function Render:setup()
@@ -62,12 +57,6 @@ function Render.apply(config, marks, name, start_tag, end_tag)
             hl_group = tag.scope_highlight,
         })
     end
-end
-
----@param name string
----@return boolean
-function Render.is_void(name)
-    return Render.void[name:lower()] == true
 end
 
 ---@private

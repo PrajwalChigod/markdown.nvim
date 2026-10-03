@@ -42,4 +42,33 @@ describe('html', function()
         util.setup.text({ '<b>bold</b>' }, { html = { enabled = false } })
         util.assert_view(util.marks(), { '<b>bold</b>' })
     end)
+
+    it('img alt text', function()
+        util.setup.text({ '<img src="a.png" alt="logo">' })
+        local marks = util.marks()
+        marks:add(0, 0, {
+            virt_text = { { '󰥶 logo', 'RmLink' } },
+            virt_text_pos = 'inline',
+        })
+        marks:add({ 0, 0 }, { 0, 28 }, util.conceal())
+        util.assert_view(marks, { '󰥶 logo' })
+    end)
+
+    it('br', function()
+        util.setup.text({ 'a<br>b' })
+        local marks = util.marks()
+        marks:add({ 0, 0 }, { 1, 5 }, util.conceal())
+        util.assert_view(marks, { 'ab' })
+    end)
+
+    it('block tag', function()
+        util.setup.text({ '<div>', '', '<b>bold</b>', '', '</div>' })
+        local marks = util.marks()
+        marks:add({ 0, 0 }, { 0, 5 }, util.conceal())
+        marks:add({ 2, 2 }, { 0, 3 }, util.conceal())
+        marks:add({ 2, 2 }, { 3, 7 }, scope('Bold'))
+        marks:add({ 2, 2 }, { 7, 11 }, util.conceal())
+        marks:add({ 4, 4 }, { 0, 6 }, util.conceal())
+        util.assert_view(marks, { '', '', 'bold', '', '' })
+    end)
 end)
