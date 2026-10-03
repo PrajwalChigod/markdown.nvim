@@ -17,7 +17,7 @@ M.version = '8.14.0'
 
 function M.check()
     M.start('versions')
-    M.neovim('0.9', '0.11')
+    M.neovim('0.12')
     vim.health.ok('tree-sitter ABI: ' .. vim.treesitter.language_version)
     vim.health.ok('plugin: ' .. M.version)
 
@@ -118,14 +118,11 @@ end
 
 ---@private
 ---@param min string
----@param rec string
-function M.neovim(min, rec)
+function M.neovim(min)
     if vim.fn.has('nvim-' .. min) == 0 then
         vim.health.error('neovim < ' .. min)
-    elseif vim.fn.has('nvim-' .. rec) == 0 then
-        vim.health.warn('neovim < ' .. rec .. ' some features will not work')
     else
-        vim.health.ok('neovim >= ' .. rec)
+        vim.health.ok('neovim >= ' .. min)
     end
 end
 

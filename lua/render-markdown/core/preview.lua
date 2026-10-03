@@ -54,7 +54,7 @@ function M.open(src_buf)
 
     vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
         group = M.group,
-        buffer = src_buf,
+        buf = src_buf,
         callback = function(args)
             if env.valid(src_buf, src_win) and env.valid(dst_buf, dst_win) then
                 M.copy_cursor(src_win, dst_win)
@@ -65,7 +65,7 @@ function M.open(src_buf)
 
     vim.api.nvim_create_autocmd({ 'TextChanged', 'TextChangedI' }, {
         group = M.group,
-        buffer = src_buf,
+        buf = src_buf,
         callback = function(args)
             if env.valid(src_buf, src_win) and env.valid(dst_buf, dst_win) then
                 -- also need to copy cursor due to event ordering
@@ -78,11 +78,11 @@ function M.open(src_buf)
 
     vim.api.nvim_create_autocmd('BufWipeout', {
         group = M.group,
-        buffer = dst_buf,
+        buf = dst_buf,
         once = true,
         callback = function()
             M.buffers[src_buf] = nil
-            vim.api.nvim_clear_autocmds({ group = M.group, buffer = src_buf })
+            vim.api.nvim_clear_autocmds({ group = M.group, buf = src_buf })
             -- enable rendering for source buffer
             manager.set_buf(src_buf, true)
         end,
@@ -133,7 +133,7 @@ end
 ---@param args vim.api.keyset.create_autocmd.callback_args
 ---@param buf integer
 function M.copy_event(args, buf)
-    vim.api.nvim_exec_autocmds(args.event, { buffer = buf })
+    vim.api.nvim_exec_autocmds(args.event, { buf = buf })
 end
 
 return M

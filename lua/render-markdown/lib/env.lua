@@ -1,4 +1,3 @@
-local compat = require('render-markdown.lib.compat')
 local list = require('render-markdown.lib.list')
 
 ---@class render.md.Env
@@ -32,7 +31,7 @@ function M.file_size_mb(file)
         file = vim.api.nvim_buf_get_name(file)
     end
     local ok, stats = pcall(function()
-        return compat.uv.fs_stat(file)
+        return vim.uv.fs_stat(file)
     end)
     if not ok or not stats then
         return 0

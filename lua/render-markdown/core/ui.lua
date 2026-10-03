@@ -1,9 +1,9 @@
 local Context = require('render-markdown.request.context')
-local compat = require('render-markdown.lib.compat')
 local env = require('render-markdown.lib.env')
 local iter = require('render-markdown.lib.iter')
 local log = require('render-markdown.core.log')
 local state = require('render-markdown.state')
+local str = require('render-markdown.lib.str')
 
 ---@class render.md.Ui
 local M = {}
@@ -131,7 +131,7 @@ function Updater:render()
             self:clear()
             self.decorator:set(extmarks)
             if initial then
-                compat.fix_lsp_window(self.buf, self.win, extmarks)
+                M.fix_lsp_window(self.buf, self.win, extmarks)
                 state.on.initial({ buf = self.buf, win = self.win })
             end
             self:display()
@@ -144,8 +144,8 @@ end
 ---@private
 ---@param callback fun(extmarks: render.md.Extmark[]|nil)
 function Updater:parse(callback)
-    local ok, parser = pcall(vim.treesitter.get_parser, self.buf)
-    if ok and parser then
+    local parser = vim.treesitter.get_parser(self.buf)
+    if parser then
         -- reset buffer context
         local context = Context.new(self.buf, self.win, self.config)
         if context then
@@ -233,6 +233,40 @@ function Updater:hide(extmark, range)
         -- mark has conceal element -> show if anti-conceal is ignored
         local ignore = self.config.anti_conceal.ignore[conceal]
         return not (ignore and env.mode.is(self.mode, ignore))
+    end
+end
+
+---@private
+---@param buf integer
+---@param win integer
+---@param extmarks render.md.Extmark[]
+---@see vim.lsp.util.open_floating_preview
+function M.fix_lsp_window(buf, win, extmarks)
+    -- this is a fragile way of identifying whether this is a floating LSP
+    -- window, comes from the implementation and not from any documentation
+    local has_lsp = pcall(vim.api.nvim_win_get_var, win, 'lsp_floating_bufnr')
+    if not has_lsp then
+        return
+    end
+
+    -- account for conceal lines marks allowing us to reduce window height
+    local height = vim.api.nvim_win_text_height(win, {}).all ---@type integer
+    for _, extmark in ipairs(extmarks) do
+        if extmark:get().opts.conceal_lines then
+            height = height - 1
+        end
+    end
+    if height < vim.api.nvim_win_get_height(win) then
+        vim.api.nvim_win_set_height(win, height)
+    end
+
+    -- disable line wrapping if it is not needed to contain the text
+    local width = 0 ---@type integer
+    for _, line in ipairs(vim.api.nvim_buf_get_lines(buf, 0, -1, false)) do
+        width = math.max(width, str.width(line))
+    end
+    if width <= vim.api.nvim_win_get_width(win) then
+        env.win.set(win, 'wrap', false)
     end
 end
 

@@ -1,4 +1,3 @@
-local compat = require('render-markdown.lib.compat')
 local log = require('render-markdown.core.log')
 
 ---@class (exact) render.md.Mark
@@ -111,41 +110,12 @@ end
 ---@return boolean
 function Marks:insert(config, mark)
     mark.modes = config.render_modes
-    local feature, min_version = self:validate(mark.opts)
-    if feature and min_version then
-        local message = feature .. ' requires neovim >= ' .. min_version
-        log.add('error', 'Mark', message, mark)
-        return false
-    end
     log.add('trace', 'Mark', mark)
     if self.update then
         self:run_update(mark)
     end
     self.marks[#self.marks + 1] = mark
     return true
-end
-
----@private
----@param opts render.md.mark.Opts
----@return string?, string?
-function Marks:validate(opts)
-    if not compat.has_10 then
-        if opts.virt_text_pos == 'inline' then
-            return "virt_text_pos = 'inline'", '0.10.0'
-        end
-        if opts.virt_text_repeat_linebreak then
-            return 'virt_text_repeat_linebreak', '0.10.0'
-        end
-    end
-    if not compat.has_11 then
-        if opts.virt_text_pos == 'eol_right_align' then
-            return "virt_text_pos = 'eol_right_align'", '0.11.0'
-        end
-        if opts.conceal_lines then
-            return 'conceal_lines', '0.11.0'
-        end
-    end
-    return nil, nil
 end
 
 ---@private

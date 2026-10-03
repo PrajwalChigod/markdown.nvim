@@ -27,26 +27,25 @@ Improve viewing Markdown in Neovim
 - Large files: only renders visible range, can be entirely disabled based on size
 - Custom rendering: provides extension point where user can add anything
 - Renders the following `markdown` components out of the box:
-  - Headings: icon, color, border, padding [^1], width
-  - Code blocks: background, language icon [^1] [^2], border, padding [^1], width
+  - Headings: icon, color, border, padding, width
+  - Code blocks: background, language icon [^1], border, padding, width
   - Code inline: background
   - Horizontal breaks: icon, color, width
-  - List bullets: icon, color, padding [^1]
+  - List bullets: icon, color, padding
   - Checkboxes: icon, color, user defined states
-  - Block quotes: icon, color, line breaks [^1]
+  - Block quotes: icon, color, line breaks
   - Callouts: icon, color, user defined values, Github & Obsidian defaults
-  - Tables: border, color, alignment indicator, auto align cells [^1]
-  - Links [^1]: icon, color, user defined destinations
-  - Latex blocks [^3]: renders formulas
-  - Org indent mode [^1]: per level padding
+  - Tables: border, color, alignment indicator, auto align cells
+  - Links: icon, color, user defined destinations
+  - Latex blocks [^2]: renders formulas
+  - Org indent mode: per level padding
 
-[^1]: Requires neovim >= `0.10.0`
-[^2]: Requires icon provider, `mini.icons` or `nvim-web-devicons`
-[^3]: Requires `latex` parser and `pylatexenc`
+[^1]: Requires icon provider, `mini.icons` or `nvim-web-devicons`
+[^2]: Requires `latex` parser and `pylatexenc`
 
 # Requirements
 
-- Neovim `>= 0.9.0` (minimum) `>= 0.10.0` (recommended)
+- Neovim `>= 0.12.0`
 - Nerd font symbols: [more details](https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki/Fonts)
 - [treesitter](https://github.com/nvim-treesitter/nvim-treesitter) parsers:
   - [markdown & markdown_inline](https://github.com/tree-sitter-grammars/tree-sitter-markdown):
@@ -655,7 +654,6 @@ require('render-markdown').setup({
             scope_highlight = nil,
         },
         -- Define custom checkbox states, more involved, not part of the markdown grammar.
-        -- As a result this requires neovim >= 0.10.0 since it relies on 'inline' extmarks.
         -- The key is for healthcheck and to allow users to change its values, value type below.
         -- | raw             | matched against the raw text of a 'shortcut_link'           |
         -- | rendered        | replaces the 'raw' value when rendering                     |
@@ -675,7 +673,7 @@ require('render-markdown').setup({
         render_modes = false,
         -- Replaces '>' of 'block_quote'.
         icon = '▋',
-        -- Whether to repeat icon on wrapped lines. Requires neovim >= 0.10. This will obscure text
+        -- Whether to repeat icon on wrapped lines. This will obscure text
         -- if incorrectly configured with :h 'showbreak', :h 'breakindent' and :h 'breakindentopt'.
         -- A combination of these that is likely to work follows.
         -- | showbreak      | '  ' (2 spaces)   |
@@ -1449,7 +1447,6 @@ require('render-markdown').setup({
             scope_highlight = nil,
         },
         -- Define custom checkbox states, more involved, not part of the markdown grammar.
-        -- As a result this requires neovim >= 0.10.0 since it relies on 'inline' extmarks.
         -- The key is for healthcheck and to allow users to change its values, value type below.
         -- | raw             | matched against the raw text of a 'shortcut_link'           |
         -- | rendered        | replaces the 'raw' value when rendering                     |
@@ -1484,7 +1481,7 @@ require('render-markdown').setup({
         render_modes = false,
         -- Replaces '>' of 'block_quote'.
         icon = '▋',
-        -- Whether to repeat icon on wrapped lines. Requires neovim >= 0.10. This will obscure text
+        -- Whether to repeat icon on wrapped lines. This will obscure text
         -- if incorrectly configured with :h 'showbreak', :h 'breakindent' and :h 'breakindentopt'.
         -- A combination of these that is likely to work follows.
         -- | showbreak      | '  ' (2 spaces)   |

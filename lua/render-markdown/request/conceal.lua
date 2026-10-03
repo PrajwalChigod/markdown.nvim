@@ -1,4 +1,3 @@
-local compat = require('render-markdown.lib.compat')
 local env = require('render-markdown.lib.env')
 local interval = require('render-markdown.lib.interval')
 local str = require('render-markdown.lib.str')
@@ -51,8 +50,7 @@ function Conceal:hidden(body)
     if not self:enabled() then
         return false
     end
-    -- conceal lines metadata require neovim >= 0.11.0 to function
-    return compat.has_11 and self:line(body).hidden
+    return self:line(body).hidden
 end
 
 ---@param body render.md.node.Body
