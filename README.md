@@ -4,6 +4,12 @@ Improve viewing Markdown in Neovim
 
 <!-- panvimdoc-ignore-start -->
 
+> [!NOTE]
+> This project started as a fork of
+> [render-markdown.nvim](https://github.com/MeanderingProgrammer/render-markdown.nvim)
+> by MeanderingProgrammer, as of version 8.14.0. It has since taken a different
+> direction and is maintained independently, without syncing upstream changes.
+
 | Screenshot | Video     |
 | ---------- | --------- |
 | ![Heading](https://github.com/user-attachments/assets/40655575-b091-4ab8-b830-38f8004d7746) | ![Heading](https://github.com/user-attachments/assets/03f629ea-f6da-4f05-a035-827fd944e8be) |
@@ -75,7 +81,7 @@ vim.pack.add({
     'https://github.com/nvim-mini/mini.nvim',            -- if you use the mini.nvim suite
     -- 'https://github.com/nvim-mini/mini.icons',        -- if you use standalone mini plugins
     -- 'https://github.com/nvim-tree/nvim-web-devicons', -- if you prefer nvim-web-devicons
-    'https://github.com/MeanderingProgrammer/render-markdown.nvim',
+    'https://github.com/PrajwalChigod/markdown.nvim',
 })
 require('render-markdown').setup({}) -- only mandatory if you want to set custom options
 ```
@@ -84,7 +90,8 @@ require('render-markdown').setup({}) -- only mandatory if you want to set custom
 
 ```lua
 {
-    'MeanderingProgrammer/render-markdown.nvim',
+    'PrajwalChigod/markdown.nvim',
+    main = 'render-markdown',
     dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.nvim' },            -- if you use the mini.nvim suite
     -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.icons' },        -- if you use standalone mini plugins
     -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
@@ -94,19 +101,11 @@ require('render-markdown').setup({}) -- only mandatory if you want to set custom
 }
 ```
 
-## rocks.nvim
-
-This plugin is available on [LuaRocks](https://luarocks.org/modules/MeanderingProgrammer/render-markdown.nvim)
-
-```vim
-:Rocks install render-markdown.nvim
-```
-
 ## packer.nvim
 
 ```lua
 use({
-    'MeanderingProgrammer/render-markdown.nvim',
+    'PrajwalChigod/markdown.nvim',
     after = { 'nvim-treesitter' },
     requires = { 'nvim-mini/mini.nvim', opt = true },            -- if you use the mini.nvim suite
     -- requires = { 'nvim-mini/mini.icons', opt = true },        -- if you use standalone mini plugins
@@ -1914,12 +1913,3 @@ The table below shows all the highlight groups with their default link
 - [crates.nvim](https://github.com/Saecki/crates.nvim): Used the in-process lsp
   implementation as an awesome reference [lsp.lua](https://github.com/saecki/crates.nvim/blob/main/lua/crates/lsp.lua)
 
-<!-- panvimdoc-ignore-start -->
-
-# Donate
-
-I enjoy working on these projects and will continue to do so with the time I can
-find. Any support is appreciated including starring the repo and reporting issues.
-Money is also nice: [Donate via Stripe](https://donate.stripe.com/4gw2bSbwA5gw5s48ww).
-
-<!-- panvimdoc-ignore-end -->
