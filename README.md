@@ -950,6 +950,7 @@ require('render-markdown').setup({
         -- | scope_highlight | optional highlight for item associated with tag   |
         -- | attribute       | optional attribute whose value is inlined at tag  |
         -- Tags work inside HTML blocks and inline within paragraphs.
+        -- Elements with align="center" / align="right" and <center> are aligned.
         tag = {
             -- Text styles
             b = { scope_highlight = 'RenderMarkdownHtmlBold' },

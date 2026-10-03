@@ -4,7 +4,7 @@
 
 ### Features
 
-- render common HTML tags (bold, italic, headings, links, images, etc.) in HTML blocks and inline within paragraphs
+- render common HTML tags (bold, italic, headings, links, images, etc.) in HTML blocks and inline within paragraphs, including `align="center"` and `<center>`
 
 ## 8.14.0 (2026-09-14)
 

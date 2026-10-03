@@ -71,4 +71,32 @@ describe('html', function()
         marks:add({ 4, 4 }, { 0, 6 }, util.conceal())
         util.assert_view(marks, { '', '', 'bold', '', '' })
     end)
+
+    it('align center', function()
+        util.setup.text({ '<h1 align="center" id="riftnvim">rift.nvim</h1>' })
+        local marks = util.marks()
+        marks:add(0, 0, {
+            virt_text = { { (' '):rep(35), 'Normal' } },
+            virt_text_pos = 'inline',
+        })
+        marks:add({ 0, 0 }, { 0, 33 }, util.conceal())
+        marks:add({ 0, 0 }, { 33, 42 }, { hl_eol = false, hl_group = 'RmH1' })
+        marks:add({ 0, 0 }, { 42, 47 }, util.conceal())
+        util.assert_view(marks, { (' '):rep(35) .. 'rift.nvim' })
+    end)
+
+    it('align center multiline skips tag only lines', function()
+        util.setup.text({ '<p align="center">', '  <b>hi</b>', '</p>' })
+        local marks = util.marks()
+        marks:add({ 0, 0 }, { 0, 18 }, util.conceal())
+        marks:add(1, 2, {
+            virt_text = { { (' '):rep(39), 'Normal' } },
+            virt_text_pos = 'inline',
+        })
+        marks:add({ 1, 1 }, { 2, 5 }, util.conceal())
+        marks:add({ 1, 1 }, { 5, 7 }, scope('Bold'))
+        marks:add({ 1, 1 }, { 7, 11 }, util.conceal())
+        marks:add({ 2, 2 }, { 0, 4 }, util.conceal())
+        util.assert_view(marks, { '', '  ' .. (' '):rep(39) .. 'hi', '' })
+    end)
 end)
