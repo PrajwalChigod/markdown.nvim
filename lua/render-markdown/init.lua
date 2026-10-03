@@ -142,15 +142,6 @@ function M.resolve_config(user)
     local preset = require('render-markdown.lib.presets').get(user)
     local config = vim.tbl_deep_extend('force', M.default, preset, user)
 
-    -- override settings that are incompatible with neovim version
-    local compat = require('render-markdown.lib.compat')
-    if config.code.border == 'hide' and not compat.has_11 then
-        config.code.border = 'thin'
-    end
-    if config.pipe_table.wrap and not compat.has_11 then
-        config.pipe_table.wrap = false
-    end
-
     -- override settings that are incompatible with other settings
     if config.indent.enabled then
         config.pipe_table.border_virtual = true

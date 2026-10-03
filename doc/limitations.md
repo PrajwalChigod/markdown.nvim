@@ -17,7 +17,7 @@ wrapping. Concealing more characters cannot remove those screen lines.
 Worse yet the issue seems incredibly complicated and unlikely to be solved any time
 soon [ISSUE #14409](https://github.com/neovim/neovim/issues/14409).
 
-For tables `pipe_table.wrap = true` provides an alternative on Neovim 0.11+ by
+For tables `pipe_table.wrap = true` provides an alternative by
 completely replacing the lines with virtual lines.
 
 ## `block` Width Removes Column Features
@@ -186,16 +186,6 @@ of opening a file. At the time of writing these are:
 Something about the way these are done causes the file to appear be opened in `insert`
 mode despite being in `normal` mode. Additionally there is no `ModeChanged` event
 that occurs after this to go back to `normal` mode.
-
-## Text Boundaries
-
-[FIX 5ce3566](https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/5ce35662725b1024c6dddc8d0bc03befc5abc878)
-
-Should no longer be an issue when using neovim >= `0.10.0`.
-
-[ISSUE #35](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/35)
-
-Text that extends beyond available space can overwrite content.
 
 ## Which Key Limiting Modes
 

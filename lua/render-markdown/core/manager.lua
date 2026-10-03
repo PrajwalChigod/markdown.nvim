@@ -113,7 +113,7 @@ function M.attach(buf)
 
     vim.api.nvim_create_autocmd(events, {
         group = M.group,
-        buffer = buf,
+        buf = buf,
         callback = function(args)
             if not state.get(buf).enabled then
                 return

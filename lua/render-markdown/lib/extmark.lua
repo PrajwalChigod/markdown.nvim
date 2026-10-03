@@ -56,8 +56,8 @@ function Extmark:show(ns, buf)
     if ok then
         self.id = id
     else
-        local compat = require('render-markdown.lib.compat')
-        compat.release(('nvim_buf_set_extmark error (%s)'):format(id))
+        local message = 'render-markdown.nvim: nvim_buf_set_extmark error (%s)'
+        vim.notify_once(message:format(id), vim.log.levels.ERROR)
     end
 end
 

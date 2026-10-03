@@ -332,7 +332,6 @@ M.checkbox.default = {
         scope_highlight = nil,
     },
     -- Define custom checkbox states, more involved, not part of the markdown grammar.
-    -- As a result this requires neovim >= 0.10.0 since it relies on 'inline' extmarks.
     -- The key is for healthcheck and to allow users to change its values, value type below.
     -- | raw             | matched against the raw text of a 'shortcut_link'           |
     -- | rendered        | replaces the 'raw' value when rendering                     |
@@ -1808,7 +1807,7 @@ M.quote.default = {
     render_modes = false,
     -- Replaces '>' of 'block_quote'.
     icon = '▋',
-    -- Whether to repeat icon on wrapped lines. Requires neovim >= 0.10. This will obscure text
+    -- Whether to repeat icon on wrapped lines. This will obscure text
     -- if incorrectly configured with :h 'showbreak', :h 'breakindent' and :h 'breakindentopt'.
     -- A combination of these that is likely to work follows.
     -- | showbreak      | '  ' (2 spaces)   |

@@ -2,6 +2,10 @@
 
 ## Pre-release
 
+### Breaking Changes
+
+- require neovim >= 0.12, support for older versions is dropped along with the compatibility layer
+
 ### Features
 
 - render common HTML tags (bold, italic, headings, links, images, etc.) in HTML blocks and inline within paragraphs, including `align="center"` and `<center>`

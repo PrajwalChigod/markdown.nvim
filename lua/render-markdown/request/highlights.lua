@@ -132,7 +132,8 @@ function Highlights:tree(language, root)
         return
     end
     self.view:query(root, query, function(id, node, data)
-        local row, start_col, _, end_col = Highlights.range(id, data, node)
+        local row, start_col, _, end_col =
+            Highlights.range(self.buf, node, data[id])
         if data.conceal_lines then
             self:add(row, { hidden = true })
         end
@@ -158,17 +159,14 @@ function Highlights:tree(language, root)
 end
 
 ---@private
----@param id integer
----@param data vim.treesitter.query.TSMetadata
+---@param buf integer
 ---@param node TSNode
+---@param metadata? vim.treesitter.query.TSMetadata
 ---@return integer, integer, integer, integer
-function Highlights.range(id, data, node)
-    local range = (data[id] or {}).range or data.range or { node:range() }
-    local offset = (data[id] or {}).offset or data.offset or { 0, 0, 0, 0 }
-    return range[1] + tonumber(offset[1]),
-        range[2] + tonumber(offset[2]),
-        range[3] + tonumber(offset[3]),
-        range[4] + tonumber(offset[4])
+function Highlights.range(buf, node, metadata)
+    -- applies range & offset! directives
+    local range = vim.treesitter.get_range(node, buf, metadata)
+    return range[1], range[2], range[4], range[5]
 end
 
 ---@private

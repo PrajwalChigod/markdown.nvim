@@ -90,8 +90,8 @@ end
 ---@return render.md.Node?
 function M.node(buf, row, col, lang)
     -- parse current row to get up to date node
-    local ok, parser = pcall(vim.treesitter.get_parser, buf, lang)
-    if not ok or not parser then
+    local parser = vim.treesitter.get_parser(buf, lang)
+    if not parser then
         return nil
     end
     parser:parse({ row, row })

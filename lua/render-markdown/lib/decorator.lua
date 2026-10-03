@@ -1,5 +1,4 @@
 local Extmark = require('render-markdown.lib.extmark')
-local compat = require('render-markdown.lib.compat')
 local replacements = require('render-markdown.lib.replacements')
 
 ---@class render.md.Decorator
@@ -18,7 +17,7 @@ Decorator.__index = Decorator
 function Decorator.new(buf)
     local self = setmetatable({}, Decorator)
     self.buf = buf
-    self.timer = assert(compat.uv.new_timer())
+    self.timer = assert(vim.uv.new_timer())
     self.running = false
     self.marks = {}
     self.generated = {}

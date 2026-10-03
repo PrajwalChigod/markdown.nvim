@@ -44,10 +44,9 @@ end
 function M.runtime(name, callback)
     if state.log_runtime then
         return function()
-            local compat = require('render-markdown.lib.compat')
-            local start_time = compat.uv.hrtime()
+            local start_time = vim.uv.hrtime()
             callback()
-            local end_time = compat.uv.hrtime()
+            local end_time = vim.uv.hrtime()
             local elapsed = (end_time - start_time) / 1e+6
             assert(elapsed < 10000, 'invalid elapsed time')
             -- selene: allow(deprecated)
