@@ -1,17 +1,17 @@
 ---@module 'luassert'
 
-local interval = require('render-markdown.lib.interval')
+local interval = require('renderer.lib.interval')
 
 describe('interval', function()
-    ---@class render.md.test.range.Entry
+    ---@class renderer.test.range.Entry
     ---@field [1] any
-    ---@field [2] render.md.Range
+    ---@field [2] renderer.Range
     ---@field [3] string
 
     it('contains', function()
-        ---@type render.md.Range
+        ---@type renderer.Range
         local range = { 5, 9 }
-        ---@type render.md.test.range.Entry[]
+        ---@type renderer.test.range.Entry[]
         local entries = {
             { true, { 5, 9 }, 'identity' },
             { true, { 6, 8 }, 'inside' },
@@ -34,9 +34,9 @@ describe('interval', function()
     end)
 
     it('overlap inclusive', function()
-        ---@type render.md.Range
+        ---@type renderer.Range
         local range = { 5, 9 }
-        ---@type render.md.test.range.Entry[]
+        ---@type renderer.test.range.Entry[]
         local entries = {
             { { 5, 9 }, { 5, 9 }, 'identity' },
             { { 6, 8 }, { 6, 8 }, 'inside' },
@@ -63,9 +63,9 @@ describe('interval', function()
     end)
 
     it('overlap exclusive', function()
-        ---@type render.md.Range
+        ---@type renderer.Range
         local range = { 5, 9 }
-        ---@type render.md.test.range.Entry[]
+        ---@type renderer.test.range.Entry[]
         local entries = {
             { { 5, 9 }, { 5, 9 }, 'identity' },
             { { 6, 8 }, { 6, 8 }, 'inside' },
@@ -92,7 +92,7 @@ describe('interval', function()
     end)
 
     it('coalesce', function()
-        ---@type render.md.Range[]
+        ---@type renderer.Range[]
         local ranges = {
             { 3, 8 },
             { 13, 14 },
@@ -101,7 +101,7 @@ describe('interval', function()
             { 14, 20 },
             { 1, 5 },
         }
-        ---@type render.md.Range[]
+        ---@type renderer.Range[]
         local expected = {
             { 1, 8 },
             { 12, 20 },

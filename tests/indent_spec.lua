@@ -19,7 +19,7 @@ describe('indent', function()
         'Bar',
     }
 
-    ---@return render.md.test.Marks
+    ---@return renderer.test.Marks
     local function shared()
         local marks, row = util.marks(), util.row()
 
@@ -47,7 +47,7 @@ describe('indent', function()
         return marks
     end
 
-    ---@return render.md.test.Marks
+    ---@return renderer.test.Marks
     local function borders()
         ---@param level integer
         ---@param position 'above'|'below'

@@ -1,13 +1,13 @@
 ---@module 'luassert'
 
----@class render.md.bench.Util
+---@class renderer.bench.Util
 local M = {}
 
 ---@param file string
 ---@return number
 function M.setup(file)
     return M.time(function()
-        require('render-markdown').setup({
+        require('renderer').setup({
             debounce = 0,
             change_events = { 'TextChanged' },
         })
@@ -52,7 +52,7 @@ end
 
 ---@param expected integer
 function M.num_marks(expected)
-    local ui = require('render-markdown.core.ui')
+    local ui = require('renderer.core.ui')
     local marks = vim.api.nvim_buf_get_extmarks(0, ui.ns, 0, -1, {})
     assert.same(expected, #marks)
 end

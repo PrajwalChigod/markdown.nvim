@@ -1,9 +1,9 @@
----@class render.md.test.Row
+---@class renderer.test.Row
 ---@field private value integer
 local Row = {}
 Row.__index = Row
 
----@return render.md.test.Row
+---@return renderer.test.Row
 function Row.new()
     local self = setmetatable({}, Row)
     self.value = 0
@@ -12,9 +12,9 @@ end
 
 ---@param soff integer
 ---@param eoff? integer
----@return render.md.test.Range
+---@return renderer.test.Range
 function Row:get(soff, eoff)
-    ---@type render.md.test.Range
+    ---@type renderer.test.Range
     return { self:inc(soff), eoff and self:inc(eoff) or nil }
 end
 

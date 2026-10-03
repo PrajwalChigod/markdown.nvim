@@ -157,14 +157,14 @@ def update_handlers(root: Path) -> None:
     ]
     lua_types = {lua_type.name(): lua_type for lua_type in get_lua_types(files)}
     names = [
-        "render.md.Handler",
-        "render.md.handler.Context",
-        "render.md.Mark",
-        "render.md.mark.Conceal",
-        "render.md.mark.Opts",
-        "render.md.mark.Line",
-        "render.md.mark.Text",
-        "render.md.mark.Hl",
+        "renderer.Handler",
+        "renderer.handler.Context",
+        "renderer.Mark",
+        "renderer.mark.Conceal",
+        "renderer.mark.Opts",
+        "renderer.mark.Line",
+        "renderer.mark.Text",
+        "renderer.mark.Hl",
     ]
     sections = [lua_types[name].to_str() for name in names]
 

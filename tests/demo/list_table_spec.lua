@@ -3,7 +3,7 @@
 local util = require('tests.util')
 
 describe('demo/list_table.md', function()
-    ---@return render.md.test.Marks
+    ---@return renderer.test.Marks
     local function shared()
         local marks, row = util.marks(), util.row()
 

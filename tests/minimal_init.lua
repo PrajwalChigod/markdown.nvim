@@ -25,7 +25,7 @@ vim.opt.rtp:prepend(get_path({ 'mini.nvim', 'mini.icons' }))
 
 -- source this plugin
 vim.opt.rtp:prepend('.')
-vim.cmd.runtime('plugin/render-markdown.lua')
+vim.cmd.runtime('plugin/renderer.lua')
 
 -- used for unit testing
 vim.opt.rtp:prepend(get_path({ 'plenary.nvim' }))

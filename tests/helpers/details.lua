@@ -1,11 +1,11 @@
----@class render.md.test.MarkDetails: render.md.test.MarkInfo
+---@class renderer.test.MarkDetails: renderer.test.MarkInfo
 local MarkDetails = {}
 MarkDetails.__index = MarkDetails
 
 ---@param row integer
 ---@param col integer
 ---@param details vim.api.keyset.extmark_details
----@return render.md.test.MarkDetails
+---@return renderer.test.MarkDetails
 function MarkDetails.new(row, col, details)
     local self = setmetatable({}, MarkDetails)
     self.row = { row, details.end_row }
@@ -49,7 +49,7 @@ function MarkDetails.new(row, col, details)
     return self
 end
 
----@param highlight number|render.md.mark.Hl
+---@param highlight number|renderer.mark.Hl
 ---@return string
 function MarkDetails.simplify(highlight)
     if type(highlight) == 'number' then
@@ -60,14 +60,14 @@ function MarkDetails.simplify(highlight)
     end
     local result = {} ---@type string[]
     for _, value in ipairs(highlight) do
-        value = value:gsub('RenderMarkdown', 'Rm')
+        value = value:gsub('Renderer', 'Rm')
         result[#result + 1] = value
     end
     return table.concat(result, ':')
 end
 
----@param a render.md.test.MarkInfo
----@param b render.md.test.MarkInfo
+---@param a renderer.test.MarkInfo
+---@param b renderer.test.MarkInfo
 ---@return boolean
 function MarkDetails.__lt(a, b)
     local as = MarkDetails.priorities(a)
@@ -82,7 +82,7 @@ function MarkDetails.__lt(a, b)
 end
 
 ---@private
----@param mark render.md.test.MarkInfo
+---@param mark renderer.test.MarkInfo
 ---@return number[]
 function MarkDetails.priorities(mark)
     local virt_row = 0

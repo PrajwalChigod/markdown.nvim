@@ -75,7 +75,7 @@ Below are a few things to try out to improve the aesthetic:
   favorite since `colorcolumn` is really only helpful when editing
 
 ```lua
-require('render-markdown').setup({
+require('renderer').setup({
     win_options = {
         colorcolumn = { default = vim.o.colorcolumn, rendered = '' },
     },
@@ -85,7 +85,7 @@ require('render-markdown').setup({
 - Set the `min_width` options to the same value as `colorcolumn`
 
 ```lua
-require('render-markdown').setup({
+require('renderer').setup({
     heading = { width = 'block', min_width = tonumber(vim.o.colorcolumn) },
     code = { width = 'block', min_width = tonumber(vim.o.colorcolumn) },
 })
@@ -94,7 +94,7 @@ require('render-markdown').setup({
 - Do not use `block` width, keep the default value of `full`
 
 ```lua
-require('render-markdown').setup({
+require('renderer').setup({
     heading = { width = 'full' },
     code = { width = 'full' },
 })

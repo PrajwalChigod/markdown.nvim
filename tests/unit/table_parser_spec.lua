@@ -1,7 +1,7 @@
 ---@module 'luassert'
 
-local Parser = require('render-markdown.parser.table')
-local str = require('render-markdown.lib.str')
+local Parser = require('renderer.parser.table')
+local str = require('renderer.lib.str')
 
 describe('table parser', function()
     it('distributes space largely evently', function()

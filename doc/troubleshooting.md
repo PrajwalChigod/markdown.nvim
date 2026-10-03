@@ -6,7 +6,7 @@ plugin is not functioning how you expect. As such it is recommended to go in ord
 ## Run checkhealth
 
 ```vim
-:checkhealth render-markdown
+:checkhealth renderer
 ```
 
 If there are any `errors` these should be looked at closely, `warnings` can largely
@@ -19,7 +19,7 @@ This plugin only operates on `markdown` files by default, but can be expanded to
 run on any filetype with `markdown` injected by providing it in the config:
 
 ```lua
-require('render-markdown').setup({
+require('renderer').setup({
     file_types = { 'markdown', <other_filetype> },
 })
 ```
@@ -38,7 +38,7 @@ own configuration. The configuration for this plugin could be set by the distrib
 to some default the author prefers. So the settings you think you are using are
 not necessarily the only ones be used.
 
-Run `:RenderMarkdown config`, which will output only the non-default values being
+Run `:Renderer config`, which will output only the non-default values being
 used, you might be surprised by what you find.
 
 ## Validate Parse Tree
@@ -108,7 +108,7 @@ Use the same file from [Validate Parse Tree](#validate-parse-tree).
 Change plugin configuration to output `trace` logs:
 
 ```lua
-require('render-markdown').setup({
+require('renderer').setup({
     log_level = 'trace',
 })
 ```
@@ -121,6 +121,6 @@ This should trigger the rendering logic, then close Neovim.
 
 ### 4) Provide Logs in Issue
 
-Logs can be retrieved by running `:RenderMarkdown log`.
+Logs can be retrieved by running `:Renderer log`.
 
 Copy the contents and paste them into the issue.

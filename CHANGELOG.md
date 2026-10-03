@@ -10,6 +10,9 @@ Entries below 0.1.0 are the upstream history.
 
 ### Breaking Changes
 
+- renamed to `renderer.nvim`: module `require('renderer')`, command `:Renderer`,
+  highlight groups `Renderer*`, config global `vim.g.renderer_config`,
+  health check `:checkhealth renderer`
 - require neovim >= 0.12, support for older versions is dropped along with the compatibility layer
 
 ### Features

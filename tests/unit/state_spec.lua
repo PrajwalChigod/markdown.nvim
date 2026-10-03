@@ -1,12 +1,12 @@
 ---@module 'luassert'
 
-local state = require('render-markdown.state')
+local state = require('renderer.state')
 
 describe('state', function()
-    ---@param config render.md.UserConfig
+    ---@param config renderer.UserConfig
     ---@param expected string[]
     local function validate(config, expected)
-        require('render-markdown').setup(config)
+        require('renderer').setup(config)
         assert.same(expected, state.validate())
     end
 

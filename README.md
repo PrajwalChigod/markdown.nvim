@@ -1,4 +1,4 @@
-# render-markdown.nvim
+# renderer.nvim
 
 Improve viewing Markdown in Neovim
 
@@ -81,22 +81,21 @@ vim.pack.add({
     'https://github.com/nvim-mini/mini.nvim',            -- if you use the mini.nvim suite
     -- 'https://github.com/nvim-mini/mini.icons',        -- if you use standalone mini plugins
     -- 'https://github.com/nvim-tree/nvim-web-devicons', -- if you prefer nvim-web-devicons
-    'https://github.com/PrajwalChigod/markdown.nvim',
+    'https://github.com/PrajwalChigod/renderer.nvim',
 })
-require('render-markdown').setup({}) -- only mandatory if you want to set custom options
+require('renderer').setup({}) -- only mandatory if you want to set custom options
 ```
 
 ## lazy.nvim
 
 ```lua
 {
-    'PrajwalChigod/markdown.nvim',
-    main = 'render-markdown',
+    'PrajwalChigod/renderer.nvim',
     dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.nvim' },            -- if you use the mini.nvim suite
     -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.icons' },        -- if you use standalone mini plugins
     -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
-    ---@module 'render-markdown'
-    ---@type render.md.UserConfig
+    ---@module 'renderer'
+    ---@type renderer.UserConfig
     opts = {},
 }
 ```
@@ -105,37 +104,37 @@ require('render-markdown').setup({}) -- only mandatory if you want to set custom
 
 ```lua
 use({
-    'PrajwalChigod/markdown.nvim',
+    'PrajwalChigod/renderer.nvim',
     after = { 'nvim-treesitter' },
     requires = { 'nvim-mini/mini.nvim', opt = true },            -- if you use the mini.nvim suite
     -- requires = { 'nvim-mini/mini.icons', opt = true },        -- if you use standalone mini plugins
     -- requires = { 'nvim-tree/nvim-web-devicons', opt = true }, -- if you prefer nvim-web-devicons
     config = function()
-        require('render-markdown').setup({})
+        require('renderer').setup({})
     end,
 })
 ```
 
 # Commands
 
-| Command                         | Lua Function                                | Description                                       |
-| ------------------------------- | ------------------------------------------- | ------------------------------------------------- |
-| `:RenderMarkdown`               | `require('render-markdown').enable()`       | Alias for `enable`                                |
-| `:RenderMarkdown enable`        | `require('render-markdown').enable()`       | Alias for `set(true)`                             |
-| `:RenderMarkdown buf_enable`    | `require('render-markdown').buf_enable()`   | Alias for `set_buf(true)`                         |
-| `:RenderMarkdown disable`       | `require('render-markdown').disable()`      | Alias for `set(false)`                            |
-| `:RenderMarkdown buf_disable`   | `require('render-markdown').buf_disable()`  | Alias for `set_buf(false)`                        |
-| `:RenderMarkdown toggle`        | `require('render-markdown').toggle()`       | Alias for `set()`                                 |
-| `:RenderMarkdown buf_toggle`    | `require('render-markdown').buf_toggle()`   | Alias for `set_buf()`                             |
-| `:RenderMarkdown get`           | `require('render-markdown').get()`          | Return current state                              |
-| `:RenderMarkdown set bool?`     | `require('render-markdown').set(bool?)`     | Sets state, `nil` to toggle                       |
-| `:RenderMarkdown set_buf bool?` | `require('render-markdown').set_buf(bool?)` | Sets state for current buffer, `nil` to toggle    |
-| `:RenderMarkdown preview`       | `require('render-markdown').preview()`      | Show rendered buffer to the side                  |
-| `:RenderMarkdown log`           | `require('render-markdown').log()`          | Opens the log file for this plugin                |
-| `:RenderMarkdown expand`        | `require('render-markdown').expand()`       | Increase anti-conceal margin above and below by 1 |
-| `:RenderMarkdown contract`      | `require('render-markdown').contract()`     | Decrease anti-conceal margin above and below by 1 |
-| `:RenderMarkdown debug`         | `require('render-markdown').debug()`        | Prints information about marks on current line    |
-| `:RenderMarkdown config`        | `require('render-markdown').config()`       | Prints difference between config and default      |
+| Command                   | Lua Function                         | Description                                       |
+| ------------------------- | ------------------------------------ | ------------------------------------------------- |
+| `:Renderer`               | `require('renderer').enable()`       | Alias for `enable`                                |
+| `:Renderer enable`        | `require('renderer').enable()`       | Alias for `set(true)`                             |
+| `:Renderer buf_enable`    | `require('renderer').buf_enable()`   | Alias for `set_buf(true)`                         |
+| `:Renderer disable`       | `require('renderer').disable()`      | Alias for `set(false)`                            |
+| `:Renderer buf_disable`   | `require('renderer').buf_disable()`  | Alias for `set_buf(false)`                        |
+| `:Renderer toggle`        | `require('renderer').toggle()`       | Alias for `set()`                                 |
+| `:Renderer buf_toggle`    | `require('renderer').buf_toggle()`   | Alias for `set_buf()`                             |
+| `:Renderer get`           | `require('renderer').get()`          | Return current state                              |
+| `:Renderer set bool?`     | `require('renderer').set(bool?)`     | Sets state, `nil` to toggle                       |
+| `:Renderer set_buf bool?` | `require('renderer').set_buf(bool?)` | Sets state for current buffer, `nil` to toggle    |
+| `:Renderer preview`       | `require('renderer').preview()`      | Show rendered buffer to the side                  |
+| `:Renderer log`           | `require('renderer').log()`          | Opens the log file for this plugin                |
+| `:Renderer expand`        | `require('renderer').expand()`       | Increase anti-conceal margin above and below by 1 |
+| `:Renderer contract`      | `require('renderer').contract()`     | Decrease anti-conceal margin above and below by 1 |
+| `:Renderer debug`         | `require('renderer').debug()`        | Prints information about marks on current line    |
+| `:Renderer config`        | `require('renderer').config()`       | Prints difference between config and default      |
 
 # Completions
 
@@ -150,7 +149,7 @@ enabled with no additional configuration, assuming you have general LSP completi
 Works automatically with `nvim-cmp` and `blink.cmp`.
 
 ```lua
-require('render-markdown').setup({
+require('renderer').setup({
     completions = { lsp = { enabled = true } },
 })
 ```
@@ -158,7 +157,7 @@ require('render-markdown').setup({
 ## coq_nvim
 
 ```lua
-require('render-markdown').setup({
+require('renderer').setup({
     completions = { coq = { enabled = true } },
 })
 ```
@@ -179,7 +178,7 @@ Some of the more useful fields are discussed further down.
 <summary>Default Configuration</summary>
 
 ```lua
-require('render-markdown').setup({
+require('renderer').setup({
     -- Whether markdown should be rendered by default.
     enabled = true,
     -- Vim modes that will show a rendered view of the markdown file, :h mode(), for all enabled
@@ -195,7 +194,7 @@ require('render-markdown').setup({
     -- | lazy     | will attempt to stay up to date with LazyVim configuration |
     -- | none     | does nothing                                               |
     preset = 'none',
-    -- The level of logs to write to file: vim.fn.stdpath('state') .. '/render-markdown.log'.
+    -- The level of logs to write to file: vim.fn.stdpath('state') .. '/renderer.log'.
     -- Only intended to be used for plugin development / debugging.
     log_level = 'error',
     -- Print runtime of main update method.
@@ -279,7 +278,7 @@ require('render-markdown').setup({
     },
     padding = {
         -- Highlight to use when adding whitespace, should blend in with background.
-        highlight = 'RenderMarkdownPadding',
+        highlight = 'RendererPadding',
     },
     latex = {
         -- Turn on / off latex rendering.
@@ -294,7 +293,7 @@ require('render-markdown').setup({
         -- Render block latex formulas.
         block = true,
         -- Highlight for latex blocks.
-        highlight = 'RenderMarkdownMath',
+        highlight = 'RendererMath',
         -- Determines where latex formula is rendered relative to block.
         -- | above  | above latex block                               |
         -- | below  | below latex block                               |
@@ -395,22 +394,22 @@ require('render-markdown').setup({
         -- Highlight for the heading icon and extends through the entire line.
         -- Output is evaluated by `clamp(value, context.level)`.
         backgrounds = {
-            'RenderMarkdownH1Bg',
-            'RenderMarkdownH2Bg',
-            'RenderMarkdownH3Bg',
-            'RenderMarkdownH4Bg',
-            'RenderMarkdownH5Bg',
-            'RenderMarkdownH6Bg',
+            'RendererH1Bg',
+            'RendererH2Bg',
+            'RendererH3Bg',
+            'RendererH4Bg',
+            'RendererH5Bg',
+            'RendererH6Bg',
         },
         -- Highlight for the heading and sign icons.
         -- Output is evaluated using the same logic as 'backgrounds'.
         foregrounds = {
-            'RenderMarkdownH1',
-            'RenderMarkdownH2',
-            'RenderMarkdownH3',
-            'RenderMarkdownH4',
-            'RenderMarkdownH5',
-            'RenderMarkdownH6',
+            'RendererH1',
+            'RendererH2',
+            'RendererH3',
+            'RendererH4',
+            'RendererH5',
+            'RendererH6',
         },
         -- Define custom heading patterns which allow you to override various properties based on
         -- the contents of a heading.
@@ -518,17 +517,17 @@ require('render-markdown').setup({
         -- Priority to assign to code background highlight.
         priority = 140,
         -- Highlight for code blocks.
-        highlight = 'RenderMarkdownCode',
+        highlight = 'RendererCode',
         -- Highlight for code info section, after the language.
-        highlight_info = 'RenderMarkdownCodeInfo',
+        highlight_info = 'RendererCodeInfo',
         -- Highlight for language, overrides icon provider value.
         highlight_language = nil,
         -- Highlight for border, use false to add no highlight.
-        highlight_border = 'RenderMarkdownCodeBorder',
+        highlight_border = 'RendererCodeBorder',
         -- Highlight for language, used if icon provider does not have a value.
-        highlight_fallback = 'RenderMarkdownCodeFallback',
+        highlight_fallback = 'RendererCodeFallback',
         -- Highlight for inline code.
-        highlight_inline = 'RenderMarkdownCodeInline',
+        highlight_inline = 'RendererCodeInline',
         -- Highlight for inline code left icon, default to reverse of highlight_inline.
         highlight_inline_left = nil,
         -- Highlight for inline code right icon, default to reverse of highlight_inline.
@@ -564,7 +563,7 @@ require('render-markdown').setup({
         -- Priority to assign to dash.
         priority = nil,
         -- Highlight for the whole line generated from the icon.
-        highlight = 'RenderMarkdownDash',
+        highlight = 'RendererDash',
     },
     document = {
         -- Turn on / off document rendering.
@@ -615,7 +614,7 @@ require('render-markdown').setup({
         right_pad = 0,
         -- Highlight for the bullet icon.
         -- Output is evaluated using the same logic as 'icons'.
-        highlight = 'RenderMarkdownBullet',
+        highlight = 'RendererBullet',
         -- Highlight for item associated with the bullet point.
         -- Output is evaluated using the same logic as 'icons'.
         scope_highlight = {},
@@ -640,7 +639,7 @@ require('render-markdown').setup({
             -- Replaces '[ ]' of 'task_list_marker_unchecked'.
             icon = '󰄱 ',
             -- Highlight for the unchecked icon.
-            highlight = 'RenderMarkdownUnchecked',
+            highlight = 'RendererUnchecked',
             -- Highlight for item associated with unchecked checkbox.
             scope_highlight = nil,
         },
@@ -648,7 +647,7 @@ require('render-markdown').setup({
             -- Replaces '[x]' of 'task_list_marker_checked'.
             icon = '󰱒 ',
             -- Highlight for the checked icon.
-            highlight = 'RenderMarkdownChecked',
+            highlight = 'RendererChecked',
             -- Highlight for item associated with checked checkbox.
             scope_highlight = nil,
         },
@@ -660,7 +659,7 @@ require('render-markdown').setup({
         -- | scope_highlight | optional highlight for item associated with custom checkbox |
         -- stylua: ignore
         custom = {
-            todo = { raw = '[-]', rendered = '󰥔 ', highlight = 'RenderMarkdownTodo', scope_highlight = nil },
+            todo = { raw = '[-]', rendered = '󰥔 ', highlight = 'RendererTodo', scope_highlight = nil },
         },
         -- Priority to assign to scope highlight.
         scope_priority = nil,
@@ -684,12 +683,12 @@ require('render-markdown').setup({
         -- Highlight for the quote icon.
         -- If a list is provided output is evaluated by `cycle(value, level)`.
         highlight = {
-            'RenderMarkdownQuote1',
-            'RenderMarkdownQuote2',
-            'RenderMarkdownQuote3',
-            'RenderMarkdownQuote4',
-            'RenderMarkdownQuote5',
-            'RenderMarkdownQuote6',
+            'RendererQuote1',
+            'RendererQuote2',
+            'RendererQuote3',
+            'RendererQuote4',
+            'RendererQuote5',
+            'RendererQuote6',
         },
     },
     render = {
@@ -740,9 +739,9 @@ require('render-markdown').setup({
         -- Gets placed in delimiter row for each column, position is based on alignment.
         alignment_indicator = '━',
         -- Highlight for table heading, delimiter, and the line above.
-        head = 'RenderMarkdownTableHead',
+        head = 'RendererTableHead',
         -- Highlight for everything else, main table rows and the line below.
-        row = 'RenderMarkdownTableRow',
+        row = 'RendererTableRow',
         -- Determines how the table as a whole is rendered.
         -- | none   | { enabled = false }        |
         -- | normal | { border_enabled = false } |
@@ -758,34 +757,34 @@ require('render-markdown').setup({
         -- | quote_icon | optional override for quote.icon value for individual callout       |
         -- | category   | optional metadata useful for filtering                              |
 
-        note      = { raw = '[!NOTE]',      rendered = '󰋽 Note',      highlight = 'RenderMarkdownInfo',    category = 'github'   },
-        tip       = { raw = '[!TIP]',       rendered = '󰌶 Tip',       highlight = 'RenderMarkdownSuccess', category = 'github'   },
-        important = { raw = '[!IMPORTANT]', rendered = '󰅾 Important', highlight = 'RenderMarkdownHint',    category = 'github'   },
-        warning   = { raw = '[!WARNING]',   rendered = '󰀪 Warning',   highlight = 'RenderMarkdownWarn',    category = 'github'   },
-        caution   = { raw = '[!CAUTION]',   rendered = '󰳦 Caution',   highlight = 'RenderMarkdownError',   category = 'github'   },
+        note      = { raw = '[!NOTE]',      rendered = '󰋽 Note',      highlight = 'RendererInfo',    category = 'github'   },
+        tip       = { raw = '[!TIP]',       rendered = '󰌶 Tip',       highlight = 'RendererSuccess', category = 'github'   },
+        important = { raw = '[!IMPORTANT]', rendered = '󰅾 Important', highlight = 'RendererHint',    category = 'github'   },
+        warning   = { raw = '[!WARNING]',   rendered = '󰀪 Warning',   highlight = 'RendererWarn',    category = 'github'   },
+        caution   = { raw = '[!CAUTION]',   rendered = '󰳦 Caution',   highlight = 'RendererError',   category = 'github'   },
         -- Obsidian: https://help.obsidian.md/Editing+and+formatting/Callouts
-        abstract  = { raw = '[!ABSTRACT]',  rendered = '󰨸 Abstract',  highlight = 'RenderMarkdownInfo',    category = 'obsidian' },
-        summary   = { raw = '[!SUMMARY]',   rendered = '󰨸 Summary',   highlight = 'RenderMarkdownInfo',    category = 'obsidian' },
-        tldr      = { raw = '[!TLDR]',      rendered = '󰨸 Tldr',      highlight = 'RenderMarkdownInfo',    category = 'obsidian' },
-        info      = { raw = '[!INFO]',      rendered = '󰋽 Info',      highlight = 'RenderMarkdownInfo',    category = 'obsidian' },
-        todo      = { raw = '[!TODO]',      rendered = '󰗡 Todo',      highlight = 'RenderMarkdownInfo',    category = 'obsidian' },
-        hint      = { raw = '[!HINT]',      rendered = '󰌶 Hint',      highlight = 'RenderMarkdownSuccess', category = 'obsidian' },
-        success   = { raw = '[!SUCCESS]',   rendered = '󰄬 Success',   highlight = 'RenderMarkdownSuccess', category = 'obsidian' },
-        check     = { raw = '[!CHECK]',     rendered = '󰄬 Check',     highlight = 'RenderMarkdownSuccess', category = 'obsidian' },
-        done      = { raw = '[!DONE]',      rendered = '󰄬 Done',      highlight = 'RenderMarkdownSuccess', category = 'obsidian' },
-        question  = { raw = '[!QUESTION]',  rendered = '󰘥 Question',  highlight = 'RenderMarkdownWarn',    category = 'obsidian' },
-        help      = { raw = '[!HELP]',      rendered = '󰘥 Help',      highlight = 'RenderMarkdownWarn',    category = 'obsidian' },
-        faq       = { raw = '[!FAQ]',       rendered = '󰘥 Faq',       highlight = 'RenderMarkdownWarn',    category = 'obsidian' },
-        attention = { raw = '[!ATTENTION]', rendered = '󰀪 Attention', highlight = 'RenderMarkdownWarn',    category = 'obsidian' },
-        failure   = { raw = '[!FAILURE]',   rendered = '󰅖 Failure',   highlight = 'RenderMarkdownError',   category = 'obsidian' },
-        fail      = { raw = '[!FAIL]',      rendered = '󰅖 Fail',      highlight = 'RenderMarkdownError',   category = 'obsidian' },
-        missing   = { raw = '[!MISSING]',   rendered = '󰅖 Missing',   highlight = 'RenderMarkdownError',   category = 'obsidian' },
-        danger    = { raw = '[!DANGER]',    rendered = '󱐌 Danger',    highlight = 'RenderMarkdownError',   category = 'obsidian' },
-        error     = { raw = '[!ERROR]',     rendered = '󱐌 Error',     highlight = 'RenderMarkdownError',   category = 'obsidian' },
-        bug       = { raw = '[!BUG]',       rendered = '󰨰 Bug',       highlight = 'RenderMarkdownError',   category = 'obsidian' },
-        example   = { raw = '[!EXAMPLE]',   rendered = '󰉹 Example',   highlight = 'RenderMarkdownHint' ,   category = 'obsidian' },
-        quote     = { raw = '[!QUOTE]',     rendered = '󱆨 Quote',     highlight = 'RenderMarkdownQuote',   category = 'obsidian' },
-        cite      = { raw = '[!CITE]',      rendered = '󱆨 Cite',      highlight = 'RenderMarkdownQuote',   category = 'obsidian' },
+        abstract  = { raw = '[!ABSTRACT]',  rendered = '󰨸 Abstract',  highlight = 'RendererInfo',    category = 'obsidian' },
+        summary   = { raw = '[!SUMMARY]',   rendered = '󰨸 Summary',   highlight = 'RendererInfo',    category = 'obsidian' },
+        tldr      = { raw = '[!TLDR]',      rendered = '󰨸 Tldr',      highlight = 'RendererInfo',    category = 'obsidian' },
+        info      = { raw = '[!INFO]',      rendered = '󰋽 Info',      highlight = 'RendererInfo',    category = 'obsidian' },
+        todo      = { raw = '[!TODO]',      rendered = '󰗡 Todo',      highlight = 'RendererInfo',    category = 'obsidian' },
+        hint      = { raw = '[!HINT]',      rendered = '󰌶 Hint',      highlight = 'RendererSuccess', category = 'obsidian' },
+        success   = { raw = '[!SUCCESS]',   rendered = '󰄬 Success',   highlight = 'RendererSuccess', category = 'obsidian' },
+        check     = { raw = '[!CHECK]',     rendered = '󰄬 Check',     highlight = 'RendererSuccess', category = 'obsidian' },
+        done      = { raw = '[!DONE]',      rendered = '󰄬 Done',      highlight = 'RendererSuccess', category = 'obsidian' },
+        question  = { raw = '[!QUESTION]',  rendered = '󰘥 Question',  highlight = 'RendererWarn',    category = 'obsidian' },
+        help      = { raw = '[!HELP]',      rendered = '󰘥 Help',      highlight = 'RendererWarn',    category = 'obsidian' },
+        faq       = { raw = '[!FAQ]',       rendered = '󰘥 Faq',       highlight = 'RendererWarn',    category = 'obsidian' },
+        attention = { raw = '[!ATTENTION]', rendered = '󰀪 Attention', highlight = 'RendererWarn',    category = 'obsidian' },
+        failure   = { raw = '[!FAILURE]',   rendered = '󰅖 Failure',   highlight = 'RendererError',   category = 'obsidian' },
+        fail      = { raw = '[!FAIL]',      rendered = '󰅖 Fail',      highlight = 'RendererError',   category = 'obsidian' },
+        missing   = { raw = '[!MISSING]',   rendered = '󰅖 Missing',   highlight = 'RendererError',   category = 'obsidian' },
+        danger    = { raw = '[!DANGER]',    rendered = '󱐌 Danger',    highlight = 'RendererError',   category = 'obsidian' },
+        error     = { raw = '[!ERROR]',     rendered = '󱐌 Error',     highlight = 'RendererError',   category = 'obsidian' },
+        bug       = { raw = '[!BUG]',       rendered = '󰨰 Bug',       highlight = 'RendererError',   category = 'obsidian' },
+        example   = { raw = '[!EXAMPLE]',   rendered = '󰉹 Example',   highlight = 'RendererHint' ,   category = 'obsidian' },
+        quote     = { raw = '[!QUOTE]',     rendered = '󱆨 Quote',     highlight = 'RendererQuote',   category = 'obsidian' },
+        cite      = { raw = '[!CITE]',      rendered = '󱆨 Cite',      highlight = 'RendererQuote',   category = 'obsidian' },
     },
     link = {
         -- Turn on / off inline link icon rendering.
@@ -819,9 +818,9 @@ require('render-markdown').setup({
         -- Fallback icon for 'inline_link' and 'uri_autolink' elements.
         hyperlink = '󰌹 ',
         -- Applies to the inlined icon as a fallback.
-        highlight = 'RenderMarkdownLink',
+        highlight = 'RendererLink',
         -- Applies to the link title.
-        highlight_title = 'RenderMarkdownLinkTitle',
+        highlight_title = 'RendererLinkTitle',
         -- Applies to WikiLink elements.
         wiki = {
             -- Turn on / off WikiLink rendering.
@@ -835,7 +834,7 @@ require('render-markdown').setup({
                 return nil
             end,
             -- Applies to the inlined icon.
-            highlight = 'RenderMarkdownWikiLink',
+            highlight = 'RendererWikiLink',
             -- Highlight for item associated with the WikiLink.
             scope_highlight = nil,
         },
@@ -880,7 +879,7 @@ require('render-markdown').setup({
         -- Priority to assign to sign.
         priority = nil,
         -- Applies to background of sign text.
-        highlight = 'RenderMarkdownSign',
+        highlight = 'RendererSign',
     },
     inline_highlight = {
         -- Mimics Obsidian inline highlights when content is surrounded by double equals.
@@ -891,7 +890,7 @@ require('render-markdown').setup({
         -- Additional modes to render inline highlights.
         render_modes = false,
         -- Applies to background of surrounded text.
-        highlight = 'RenderMarkdownInlineHighlight',
+        highlight = 'RendererInlineHighlight',
         -- Define custom highlights based on text prefix.
         -- The key is for healthcheck and to allow users to change its values, value type below.
         -- | prefix    | matched against text body, @see :h vim.startswith() |
@@ -918,7 +917,7 @@ require('render-markdown').setup({
         -- Priority to assign to extmarks.
         priority = 0,
         -- Applied to icon.
-        highlight = 'RenderMarkdownIndent',
+        highlight = 'RendererIndent',
     },
     html = {
         -- Turn on / off all HTML rendering.
@@ -938,7 +937,7 @@ require('render-markdown').setup({
             -- | nil      | nothing          |
             text = nil,
             -- Highlight for the inlined text.
-            highlight = 'RenderMarkdownHtmlComment',
+            highlight = 'RendererHtmlComment',
         },
         -- HTML tags whose start and end will be hidden and icon shown.
         -- The key is matched against the tag name, value type below.
@@ -950,36 +949,36 @@ require('render-markdown').setup({
         -- Elements with align="center" / align="right" and <center> are aligned.
         tag = {
             -- Text styles
-            b = { scope_highlight = 'RenderMarkdownHtmlBold' },
-            strong = { scope_highlight = 'RenderMarkdownHtmlBold' },
-            i = { scope_highlight = 'RenderMarkdownHtmlItalic' },
-            em = { scope_highlight = 'RenderMarkdownHtmlItalic' },
-            cite = { scope_highlight = 'RenderMarkdownHtmlItalic' },
-            u = { scope_highlight = 'RenderMarkdownHtmlUnderline' },
-            ins = { scope_highlight = 'RenderMarkdownHtmlUnderline' },
-            s = { scope_highlight = 'RenderMarkdownHtmlStrike' },
-            del = { scope_highlight = 'RenderMarkdownHtmlStrike' },
-            strike = { scope_highlight = 'RenderMarkdownHtmlStrike' },
-            code = { scope_highlight = 'RenderMarkdownCodeInline' },
-            kbd = { scope_highlight = 'RenderMarkdownCodeInline' },
-            tt = { scope_highlight = 'RenderMarkdownCodeInline' },
-            mark = { scope_highlight = 'RenderMarkdownInlineHighlight' },
+            b = { scope_highlight = 'RendererHtmlBold' },
+            strong = { scope_highlight = 'RendererHtmlBold' },
+            i = { scope_highlight = 'RendererHtmlItalic' },
+            em = { scope_highlight = 'RendererHtmlItalic' },
+            cite = { scope_highlight = 'RendererHtmlItalic' },
+            u = { scope_highlight = 'RendererHtmlUnderline' },
+            ins = { scope_highlight = 'RendererHtmlUnderline' },
+            s = { scope_highlight = 'RendererHtmlStrike' },
+            del = { scope_highlight = 'RendererHtmlStrike' },
+            strike = { scope_highlight = 'RendererHtmlStrike' },
+            code = { scope_highlight = 'RendererCodeInline' },
+            kbd = { scope_highlight = 'RendererCodeInline' },
+            tt = { scope_highlight = 'RendererCodeInline' },
+            mark = { scope_highlight = 'RendererInlineHighlight' },
             sub = {},
             sup = {},
             -- Links & images
-            a = { scope_highlight = 'RenderMarkdownLink' },
+            a = { scope_highlight = 'RendererLink' },
             img = {
                 icon = '󰥶 ',
-                highlight = 'RenderMarkdownLink',
+                highlight = 'RendererLink',
                 attribute = 'alt',
             },
             -- Headings
-            h1 = { scope_highlight = 'RenderMarkdownH1' },
-            h2 = { scope_highlight = 'RenderMarkdownH2' },
-            h3 = { scope_highlight = 'RenderMarkdownH3' },
-            h4 = { scope_highlight = 'RenderMarkdownH4' },
-            h5 = { scope_highlight = 'RenderMarkdownH5' },
-            h6 = { scope_highlight = 'RenderMarkdownH6' },
+            h1 = { scope_highlight = 'RendererH1' },
+            h2 = { scope_highlight = 'RendererH2' },
+            h3 = { scope_highlight = 'RendererH3' },
+            h4 = { scope_highlight = 'RendererH4' },
+            h5 = { scope_highlight = 'RendererH5' },
+            h6 = { scope_highlight = 'RendererH6' },
             -- Structure, tags are only hidden
             br = {},
             p = {},
@@ -988,7 +987,7 @@ require('render-markdown').setup({
             center = {},
             picture = {},
             details = {},
-            summary = { scope_highlight = 'RenderMarkdownHtmlBold' },
+            summary = { scope_highlight = 'RendererHtmlBold' },
         },
     },
     win_options = {
@@ -1064,7 +1063,7 @@ We use the following definitions when discussing indexing into lists:
 <summary>Heading Configuration</summary>
 
 ```lua
-require('render-markdown').setup({
+require('renderer').setup({
     heading = {
         -- Useful context to have when evaluating values.
         -- | level    | the number of '#' in the heading marker         |
@@ -1127,22 +1126,22 @@ require('render-markdown').setup({
         -- Highlight for the heading icon and extends through the entire line.
         -- Output is evaluated by `clamp(value, context.level)`.
         backgrounds = {
-            'RenderMarkdownH1Bg',
-            'RenderMarkdownH2Bg',
-            'RenderMarkdownH3Bg',
-            'RenderMarkdownH4Bg',
-            'RenderMarkdownH5Bg',
-            'RenderMarkdownH6Bg',
+            'RendererH1Bg',
+            'RendererH2Bg',
+            'RendererH3Bg',
+            'RendererH4Bg',
+            'RendererH5Bg',
+            'RendererH6Bg',
         },
         -- Highlight for the heading and sign icons.
         -- Output is evaluated using the same logic as 'backgrounds'.
         foregrounds = {
-            'RenderMarkdownH1',
-            'RenderMarkdownH2',
-            'RenderMarkdownH3',
-            'RenderMarkdownH4',
-            'RenderMarkdownH5',
-            'RenderMarkdownH6',
+            'RendererH1',
+            'RendererH2',
+            'RendererH3',
+            'RendererH4',
+            'RendererH5',
+            'RendererH6',
         },
         -- Define custom heading patterns which allow you to override various properties based on
         -- the contents of a heading.
@@ -1167,7 +1166,7 @@ require('render-markdown').setup({
 <summary>Paragraph Configuration</summary>
 
 ```lua
-require('render-markdown').setup({
+require('renderer').setup({
     paragraph = {
         -- Useful context to have when evaluating values.
         -- | text | text value of the node |
@@ -1202,7 +1201,7 @@ require('render-markdown').setup({
 <summary>Code Block Configuration</summary>
 
 ```lua
-require('render-markdown').setup({
+require('renderer').setup({
     code = {
         -- Turn on / off code block & inline code rendering.
         enabled = true,
@@ -1280,17 +1279,17 @@ require('render-markdown').setup({
         -- Priority to assign to code background highlight.
         priority = 140,
         -- Highlight for code blocks.
-        highlight = 'RenderMarkdownCode',
+        highlight = 'RendererCode',
         -- Highlight for code info section, after the language.
-        highlight_info = 'RenderMarkdownCodeInfo',
+        highlight_info = 'RendererCodeInfo',
         -- Highlight for language, overrides icon provider value.
         highlight_language = nil,
         -- Highlight for border, use false to add no highlight.
-        highlight_border = 'RenderMarkdownCodeBorder',
+        highlight_border = 'RendererCodeBorder',
         -- Highlight for language, used if icon provider does not have a value.
-        highlight_fallback = 'RenderMarkdownCodeFallback',
+        highlight_fallback = 'RendererCodeFallback',
         -- Highlight for inline code.
-        highlight_inline = 'RenderMarkdownCodeInline',
+        highlight_inline = 'RendererCodeInline',
         -- Highlight for inline code left icon, default to reverse of highlight_inline.
         highlight_inline_left = nil,
         -- Highlight for inline code right icon, default to reverse of highlight_inline.
@@ -1316,7 +1315,7 @@ require('render-markdown').setup({
 <summary>Dashed Line Configuration</summary>
 
 ```lua
-require('render-markdown').setup({
+require('renderer').setup({
     dash = {
         -- Useful context to have when evaluating values.
         -- | width | width of the current window |
@@ -1341,7 +1340,7 @@ require('render-markdown').setup({
         -- Priority to assign to dash.
         priority = nil,
         -- Highlight for the whole line generated from the icon.
-        highlight = 'RenderMarkdownDash',
+        highlight = 'RendererDash',
     },
 })
 ```
@@ -1357,7 +1356,7 @@ require('render-markdown').setup({
 <summary>Bullet Point Configuration</summary>
 
 ```lua
-require('render-markdown').setup({
+require('renderer').setup({
     bullet = {
         -- Useful context to have when evaluating values.
         -- | level | how deeply nested the list is, 1-indexed          |
@@ -1393,7 +1392,7 @@ require('render-markdown').setup({
         right_pad = 0,
         -- Highlight for the bullet icon.
         -- Output is evaluated using the same logic as 'icons'.
-        highlight = 'RenderMarkdownBullet',
+        highlight = 'RendererBullet',
         -- Highlight for item associated with the bullet point.
         -- Output is evaluated using the same logic as 'icons'.
         scope_highlight = {},
@@ -1414,7 +1413,7 @@ require('render-markdown').setup({
 <summary>Checkbox Configuration</summary>
 
 ```lua
-require('render-markdown').setup({
+require('renderer').setup({
     checkbox = {
         -- Checkboxes are a special instance of a 'list_item' that start with a 'shortcut_link'.
         -- There are two special states for unchecked & checked defined in the markdown grammar.
@@ -1433,7 +1432,7 @@ require('render-markdown').setup({
             -- Replaces '[ ]' of 'task_list_marker_unchecked'.
             icon = '󰄱 ',
             -- Highlight for the unchecked icon.
-            highlight = 'RenderMarkdownUnchecked',
+            highlight = 'RendererUnchecked',
             -- Highlight for item associated with unchecked checkbox.
             scope_highlight = nil,
         },
@@ -1441,7 +1440,7 @@ require('render-markdown').setup({
             -- Replaces '[x]' of 'task_list_marker_checked'.
             icon = '󰱒 ',
             -- Highlight for the checked icon.
-            highlight = 'RenderMarkdownChecked',
+            highlight = 'RendererChecked',
             -- Highlight for item associated with checked checkbox.
             scope_highlight = nil,
         },
@@ -1453,7 +1452,7 @@ require('render-markdown').setup({
         -- | scope_highlight | optional highlight for item associated with custom checkbox |
         -- stylua: ignore
         custom = {
-            todo = { raw = '[-]', rendered = '󰥔 ', highlight = 'RenderMarkdownTodo', scope_highlight = nil },
+            todo = { raw = '[-]', rendered = '󰥔 ', highlight = 'RendererTodo', scope_highlight = nil },
         },
         -- Priority to assign to scope highlight.
         scope_priority = nil,
@@ -1472,7 +1471,7 @@ require('render-markdown').setup({
 <summary>Block Quote Configuration</summary>
 
 ```lua
-require('render-markdown').setup({
+require('renderer').setup({
     quote = {
         -- Turn on / off block quote & callout rendering.
         enabled = true,
@@ -1492,12 +1491,12 @@ require('render-markdown').setup({
         -- Highlight for the quote icon.
         -- If a list is provided output is evaluated by `cycle(value, level)`.
         highlight = {
-            'RenderMarkdownQuote1',
-            'RenderMarkdownQuote2',
-            'RenderMarkdownQuote3',
-            'RenderMarkdownQuote4',
-            'RenderMarkdownQuote5',
-            'RenderMarkdownQuote6',
+            'RendererQuote1',
+            'RendererQuote2',
+            'RendererQuote3',
+            'RendererQuote4',
+            'RendererQuote5',
+            'RendererQuote6',
         },
     },
 })
@@ -1514,7 +1513,7 @@ require('render-markdown').setup({
 <summary>Table Configuration</summary>
 
 ```lua
-require('render-markdown').setup({
+require('renderer').setup({
     pipe_table = {
         -- Turn on / off pipe table rendering.
         enabled = true,
@@ -1559,9 +1558,9 @@ require('render-markdown').setup({
         -- Gets placed in delimiter row for each column, position is based on alignment.
         alignment_indicator = '━',
         -- Highlight for table heading, delimiter, and the line above.
-        head = 'RenderMarkdownTableHead',
+        head = 'RendererTableHead',
         -- Highlight for everything else, main table rows and the line below.
-        row = 'RenderMarkdownTableRow',
+        row = 'RendererTableRow',
         -- Determines how the table as a whole is rendered.
         -- | none   | { enabled = false }        |
         -- | normal | { border_enabled = false } |
@@ -1582,7 +1581,7 @@ require('render-markdown').setup({
 <summary>Callout Configuration</summary>
 
 ```lua
-require('render-markdown').setup({
+require('renderer').setup({
     callout = {
         -- Callouts are a special instance of a 'block_quote' that start with a 'shortcut_link'.
         -- The key is for healthcheck and to allow users to change its values, value type below.
@@ -1592,34 +1591,34 @@ require('render-markdown').setup({
         -- | quote_icon | optional override for quote.icon value for individual callout       |
         -- | category   | optional metadata useful for filtering                              |
 
-        note      = { raw = '[!NOTE]',      rendered = '󰋽 Note',      highlight = 'RenderMarkdownInfo',    category = 'github'   },
-        tip       = { raw = '[!TIP]',       rendered = '󰌶 Tip',       highlight = 'RenderMarkdownSuccess', category = 'github'   },
-        important = { raw = '[!IMPORTANT]', rendered = '󰅾 Important', highlight = 'RenderMarkdownHint',    category = 'github'   },
-        warning   = { raw = '[!WARNING]',   rendered = '󰀪 Warning',   highlight = 'RenderMarkdownWarn',    category = 'github'   },
-        caution   = { raw = '[!CAUTION]',   rendered = '󰳦 Caution',   highlight = 'RenderMarkdownError',   category = 'github'   },
+        note      = { raw = '[!NOTE]',      rendered = '󰋽 Note',      highlight = 'RendererInfo',    category = 'github'   },
+        tip       = { raw = '[!TIP]',       rendered = '󰌶 Tip',       highlight = 'RendererSuccess', category = 'github'   },
+        important = { raw = '[!IMPORTANT]', rendered = '󰅾 Important', highlight = 'RendererHint',    category = 'github'   },
+        warning   = { raw = '[!WARNING]',   rendered = '󰀪 Warning',   highlight = 'RendererWarn',    category = 'github'   },
+        caution   = { raw = '[!CAUTION]',   rendered = '󰳦 Caution',   highlight = 'RendererError',   category = 'github'   },
         -- Obsidian: https://help.obsidian.md/Editing+and+formatting/Callouts
-        abstract  = { raw = '[!ABSTRACT]',  rendered = '󰨸 Abstract',  highlight = 'RenderMarkdownInfo',    category = 'obsidian' },
-        summary   = { raw = '[!SUMMARY]',   rendered = '󰨸 Summary',   highlight = 'RenderMarkdownInfo',    category = 'obsidian' },
-        tldr      = { raw = '[!TLDR]',      rendered = '󰨸 Tldr',      highlight = 'RenderMarkdownInfo',    category = 'obsidian' },
-        info      = { raw = '[!INFO]',      rendered = '󰋽 Info',      highlight = 'RenderMarkdownInfo',    category = 'obsidian' },
-        todo      = { raw = '[!TODO]',      rendered = '󰗡 Todo',      highlight = 'RenderMarkdownInfo',    category = 'obsidian' },
-        hint      = { raw = '[!HINT]',      rendered = '󰌶 Hint',      highlight = 'RenderMarkdownSuccess', category = 'obsidian' },
-        success   = { raw = '[!SUCCESS]',   rendered = '󰄬 Success',   highlight = 'RenderMarkdownSuccess', category = 'obsidian' },
-        check     = { raw = '[!CHECK]',     rendered = '󰄬 Check',     highlight = 'RenderMarkdownSuccess', category = 'obsidian' },
-        done      = { raw = '[!DONE]',      rendered = '󰄬 Done',      highlight = 'RenderMarkdownSuccess', category = 'obsidian' },
-        question  = { raw = '[!QUESTION]',  rendered = '󰘥 Question',  highlight = 'RenderMarkdownWarn',    category = 'obsidian' },
-        help      = { raw = '[!HELP]',      rendered = '󰘥 Help',      highlight = 'RenderMarkdownWarn',    category = 'obsidian' },
-        faq       = { raw = '[!FAQ]',       rendered = '󰘥 Faq',       highlight = 'RenderMarkdownWarn',    category = 'obsidian' },
-        attention = { raw = '[!ATTENTION]', rendered = '󰀪 Attention', highlight = 'RenderMarkdownWarn',    category = 'obsidian' },
-        failure   = { raw = '[!FAILURE]',   rendered = '󰅖 Failure',   highlight = 'RenderMarkdownError',   category = 'obsidian' },
-        fail      = { raw = '[!FAIL]',      rendered = '󰅖 Fail',      highlight = 'RenderMarkdownError',   category = 'obsidian' },
-        missing   = { raw = '[!MISSING]',   rendered = '󰅖 Missing',   highlight = 'RenderMarkdownError',   category = 'obsidian' },
-        danger    = { raw = '[!DANGER]',    rendered = '󱐌 Danger',    highlight = 'RenderMarkdownError',   category = 'obsidian' },
-        error     = { raw = '[!ERROR]',     rendered = '󱐌 Error',     highlight = 'RenderMarkdownError',   category = 'obsidian' },
-        bug       = { raw = '[!BUG]',       rendered = '󰨰 Bug',       highlight = 'RenderMarkdownError',   category = 'obsidian' },
-        example   = { raw = '[!EXAMPLE]',   rendered = '󰉹 Example',   highlight = 'RenderMarkdownHint' ,   category = 'obsidian' },
-        quote     = { raw = '[!QUOTE]',     rendered = '󱆨 Quote',     highlight = 'RenderMarkdownQuote',   category = 'obsidian' },
-        cite      = { raw = '[!CITE]',      rendered = '󱆨 Cite',      highlight = 'RenderMarkdownQuote',   category = 'obsidian' },
+        abstract  = { raw = '[!ABSTRACT]',  rendered = '󰨸 Abstract',  highlight = 'RendererInfo',    category = 'obsidian' },
+        summary   = { raw = '[!SUMMARY]',   rendered = '󰨸 Summary',   highlight = 'RendererInfo',    category = 'obsidian' },
+        tldr      = { raw = '[!TLDR]',      rendered = '󰨸 Tldr',      highlight = 'RendererInfo',    category = 'obsidian' },
+        info      = { raw = '[!INFO]',      rendered = '󰋽 Info',      highlight = 'RendererInfo',    category = 'obsidian' },
+        todo      = { raw = '[!TODO]',      rendered = '󰗡 Todo',      highlight = 'RendererInfo',    category = 'obsidian' },
+        hint      = { raw = '[!HINT]',      rendered = '󰌶 Hint',      highlight = 'RendererSuccess', category = 'obsidian' },
+        success   = { raw = '[!SUCCESS]',   rendered = '󰄬 Success',   highlight = 'RendererSuccess', category = 'obsidian' },
+        check     = { raw = '[!CHECK]',     rendered = '󰄬 Check',     highlight = 'RendererSuccess', category = 'obsidian' },
+        done      = { raw = '[!DONE]',      rendered = '󰄬 Done',      highlight = 'RendererSuccess', category = 'obsidian' },
+        question  = { raw = '[!QUESTION]',  rendered = '󰘥 Question',  highlight = 'RendererWarn',    category = 'obsidian' },
+        help      = { raw = '[!HELP]',      rendered = '󰘥 Help',      highlight = 'RendererWarn',    category = 'obsidian' },
+        faq       = { raw = '[!FAQ]',       rendered = '󰘥 Faq',       highlight = 'RendererWarn',    category = 'obsidian' },
+        attention = { raw = '[!ATTENTION]', rendered = '󰀪 Attention', highlight = 'RendererWarn',    category = 'obsidian' },
+        failure   = { raw = '[!FAILURE]',   rendered = '󰅖 Failure',   highlight = 'RendererError',   category = 'obsidian' },
+        fail      = { raw = '[!FAIL]',      rendered = '󰅖 Fail',      highlight = 'RendererError',   category = 'obsidian' },
+        missing   = { raw = '[!MISSING]',   rendered = '󰅖 Missing',   highlight = 'RendererError',   category = 'obsidian' },
+        danger    = { raw = '[!DANGER]',    rendered = '󱐌 Danger',    highlight = 'RendererError',   category = 'obsidian' },
+        error     = { raw = '[!ERROR]',     rendered = '󱐌 Error',     highlight = 'RendererError',   category = 'obsidian' },
+        bug       = { raw = '[!BUG]',       rendered = '󰨰 Bug',       highlight = 'RendererError',   category = 'obsidian' },
+        example   = { raw = '[!EXAMPLE]',   rendered = '󰉹 Example',   highlight = 'RendererHint' ,   category = 'obsidian' },
+        quote     = { raw = '[!QUOTE]',     rendered = '󱆨 Quote',     highlight = 'RendererQuote',   category = 'obsidian' },
+        cite      = { raw = '[!CITE]',      rendered = '󱆨 Cite',      highlight = 'RendererQuote',   category = 'obsidian' },
     },
 })
 ```
@@ -1635,7 +1634,7 @@ require('render-markdown').setup({
 <summary>Link Configuration</summary>
 
 ```lua
-require('render-markdown').setup({
+require('renderer').setup({
     link = {
         -- Turn on / off inline link icon rendering.
         enabled = true,
@@ -1668,9 +1667,9 @@ require('render-markdown').setup({
         -- Fallback icon for 'inline_link' and 'uri_autolink' elements.
         hyperlink = '󰌹 ',
         -- Applies to the inlined icon as a fallback.
-        highlight = 'RenderMarkdownLink',
+        highlight = 'RendererLink',
         -- Applies to the link title.
-        highlight_title = 'RenderMarkdownLinkTitle',
+        highlight_title = 'RendererLinkTitle',
         -- Applies to WikiLink elements.
         wiki = {
             -- Turn on / off WikiLink rendering.
@@ -1684,7 +1683,7 @@ require('render-markdown').setup({
                 return nil
             end,
             -- Applies to the inlined icon.
-            highlight = 'RenderMarkdownWikiLink',
+            highlight = 'RendererWikiLink',
             -- Highlight for item associated with the WikiLink.
             scope_highlight = nil,
         },
@@ -1737,14 +1736,14 @@ require('render-markdown').setup({
 <summary>Sign Configuration</summary>
 
 ```lua
-require('render-markdown').setup({
+require('renderer').setup({
     sign = {
         -- Turn on / off sign rendering.
         enabled = true,
         -- Priority to assign to sign.
         priority = nil,
         -- Applies to background of sign text.
-        highlight = 'RenderMarkdownSign',
+        highlight = 'RendererSign',
     },
 })
 ```
@@ -1760,7 +1759,7 @@ require('render-markdown').setup({
 <summary>Indent Configuration</summary>
 
 ```lua
-require('render-markdown').setup({
+require('renderer').setup({
     indent = {
         -- Mimic org-indent-mode behavior by indenting everything under a heading based on the
         -- level of the heading. Indenting starts from level 2 headings onward by default.
@@ -1781,7 +1780,7 @@ require('render-markdown').setup({
         -- Priority to assign to extmarks.
         priority = 0,
         -- Applied to icon.
-        highlight = 'RenderMarkdownIndent',
+        highlight = 'RendererIndent',
     },
 })
 ```
@@ -1792,56 +1791,56 @@ require('render-markdown').setup({
 
 The table below shows all the highlight groups with their default link
 
-| Highlight Group               | Default Group                      | Description                |
-| ----------------------------- | ---------------------------------- | -------------------------- |
-| RenderMarkdownH1              | @markup.heading.1.markdown         | H1 icons                   |
-| RenderMarkdownH2              | @markup.heading.2.markdown         | H2 icons                   |
-| RenderMarkdownH3              | @markup.heading.3.markdown         | H3 icons                   |
-| RenderMarkdownH4              | @markup.heading.4.markdown         | H4 icons                   |
-| RenderMarkdownH5              | @markup.heading.5.markdown         | H5 icons                   |
-| RenderMarkdownH6              | @markup.heading.6.markdown         | H6 icons                   |
-| RenderMarkdownH1Bg            | DiffText                           | H1 background line         |
-| RenderMarkdownH2Bg            | DiffAdd                            | H2 background line         |
-| RenderMarkdownH3Bg            | DiffChange                         | H3 background line         |
-| RenderMarkdownH4Bg            | DiffDelete                         | H4 background line         |
-| RenderMarkdownH5Bg            | Visual                             | H5 background line         |
-| RenderMarkdownH6Bg            | CursorColumn                       | H6 background line         |
-| RenderMarkdownCode            | ColorColumn                        | Code block background      |
-| RenderMarkdownCodeInfo        | @label                             | Code info, after language  |
-| RenderMarkdownCodeBorder      | RenderMarkdownCode                 | Code border background     |
-| RenderMarkdownCodeFallback    | Normal                             | Fallback for code language |
-| RenderMarkdownCodeInline      | RenderMarkdownCode                 | Inline code background     |
-| RenderMarkdownQuote           | @markup.quote                      | Default for block quote    |
-| RenderMarkdownQuote1          | RenderMarkdownQuote                | Level 1 block quote marker |
-| RenderMarkdownQuote2          | RenderMarkdownQuote                | Level 2 block quote marker |
-| RenderMarkdownQuote3          | RenderMarkdownQuote                | Level 3 block quote marker |
-| RenderMarkdownQuote4          | RenderMarkdownQuote                | Level 4 block quote marker |
-| RenderMarkdownQuote5          | RenderMarkdownQuote                | Level 5 block quote marker |
-| RenderMarkdownQuote6          | RenderMarkdownQuote                | Level 6 block quote marker |
-| RenderMarkdownInlineHighlight | RenderMarkdownCodeInline           | Inline highlights contents |
-| RenderMarkdownBullet          | Normal                             | List item bullet points    |
-| RenderMarkdownDash            | LineNr                             | Thematic break line        |
-| RenderMarkdownSign            | SignColumn                         | Sign column background     |
-| RenderMarkdownMath            | @markup.math                       | Latex lines                |
-| RenderMarkdownIndent          | Whitespace                         | Indent icon                |
-| RenderMarkdownHtmlComment     | @comment                           | HTML comment inline text   |
-| RenderMarkdownHtmlBold        | @markup.strong                     | HTML bold tags             |
-| RenderMarkdownHtmlItalic      | @markup.italic                     | HTML italic tags           |
-| RenderMarkdownHtmlUnderline   | @markup.underline                  | HTML underline tags        |
-| RenderMarkdownHtmlStrike      | @markup.strikethrough              | HTML strikethrough tags    |
-| RenderMarkdownLink            | @markup.link.label.markdown_inline | Link icon                  |
-| RenderMarkdownLinkTitle       | @markup.link.markdown_inline       | Link title                 |
-| RenderMarkdownWikiLink        | RenderMarkdownLink                 | WikiLink icon              |
-| RenderMarkdownUnchecked       | @markup.list.unchecked             | Unchecked checkbox         |
-| RenderMarkdownChecked         | @markup.list.checked               | Checked checkbox           |
-| RenderMarkdownTodo            | @markup.raw                        | Todo custom checkbox       |
-| RenderMarkdownTableHead       | @markup.heading                    | Pipe table heading rows    |
-| RenderMarkdownTableRow        | Normal                             | Pipe table body rows       |
-| RenderMarkdownSuccess         | DiagnosticOk                       | Success related callouts   |
-| RenderMarkdownInfo            | DiagnosticInfo                     | Info related callouts      |
-| RenderMarkdownHint            | DiagnosticHint                     | Hint related callouts      |
-| RenderMarkdownWarn            | DiagnosticWarn                     | Warning related callouts   |
-| RenderMarkdownError           | DiagnosticError                    | Error related callouts     |
+| Highlight Group         | Default Group                      | Description                |
+| ----------------------- | ---------------------------------- | -------------------------- |
+| RendererH1              | @markup.heading.1.markdown         | H1 icons                   |
+| RendererH2              | @markup.heading.2.markdown         | H2 icons                   |
+| RendererH3              | @markup.heading.3.markdown         | H3 icons                   |
+| RendererH4              | @markup.heading.4.markdown         | H4 icons                   |
+| RendererH5              | @markup.heading.5.markdown         | H5 icons                   |
+| RendererH6              | @markup.heading.6.markdown         | H6 icons                   |
+| RendererH1Bg            | DiffText                           | H1 background line         |
+| RendererH2Bg            | DiffAdd                            | H2 background line         |
+| RendererH3Bg            | DiffChange                         | H3 background line         |
+| RendererH4Bg            | DiffDelete                         | H4 background line         |
+| RendererH5Bg            | Visual                             | H5 background line         |
+| RendererH6Bg            | CursorColumn                       | H6 background line         |
+| RendererCode            | ColorColumn                        | Code block background      |
+| RendererCodeInfo        | @label                             | Code info, after language  |
+| RendererCodeBorder      | RendererCode                       | Code border background     |
+| RendererCodeFallback    | Normal                             | Fallback for code language |
+| RendererCodeInline      | RendererCode                       | Inline code background     |
+| RendererQuote           | @markup.quote                      | Default for block quote    |
+| RendererQuote1          | RendererQuote                      | Level 1 block quote marker |
+| RendererQuote2          | RendererQuote                      | Level 2 block quote marker |
+| RendererQuote3          | RendererQuote                      | Level 3 block quote marker |
+| RendererQuote4          | RendererQuote                      | Level 4 block quote marker |
+| RendererQuote5          | RendererQuote                      | Level 5 block quote marker |
+| RendererQuote6          | RendererQuote                      | Level 6 block quote marker |
+| RendererInlineHighlight | RendererCodeInline                 | Inline highlights contents |
+| RendererBullet          | Normal                             | List item bullet points    |
+| RendererDash            | LineNr                             | Thematic break line        |
+| RendererSign            | SignColumn                         | Sign column background     |
+| RendererMath            | @markup.math                       | Latex lines                |
+| RendererIndent          | Whitespace                         | Indent icon                |
+| RendererHtmlComment     | @comment                           | HTML comment inline text   |
+| RendererHtmlBold        | @markup.strong                     | HTML bold tags             |
+| RendererHtmlItalic      | @markup.italic                     | HTML italic tags           |
+| RendererHtmlUnderline   | @markup.underline                  | HTML underline tags        |
+| RendererHtmlStrike      | @markup.strikethrough              | HTML strikethrough tags    |
+| RendererLink            | @markup.link.label.markdown_inline | Link icon                  |
+| RendererLinkTitle       | @markup.link.markdown_inline       | Link title                 |
+| RendererWikiLink        | RendererLink                       | WikiLink icon              |
+| RendererUnchecked       | @markup.list.unchecked             | Unchecked checkbox         |
+| RendererChecked         | @markup.list.checked               | Checked checkbox           |
+| RendererTodo            | @markup.raw                        | Todo custom checkbox       |
+| RendererTableHead       | @markup.heading                    | Pipe table heading rows    |
+| RendererTableRow        | Normal                             | Pipe table body rows       |
+| RendererSuccess         | DiagnosticOk                       | Success related callouts   |
+| RendererInfo            | DiagnosticInfo                     | Info related callouts      |
+| RendererHint            | DiagnosticHint                     | Hint related callouts      |
+| RendererWarn            | DiagnosticWarn                     | Warning related callouts   |
+| RendererError           | DiagnosticError                    | Error related callouts     |
 
 # Info
 
@@ -1855,7 +1854,7 @@ The table below shows all the highlight groups with their default link
 > - Add `vimwiki` to the `file_types` configuration of this plugin
 >
 > ```lua
-> require('render-markdown').setup({
+> require('renderer').setup({
 >     file_types = { 'markdown', 'vimwiki' },
 > })
 > ```
