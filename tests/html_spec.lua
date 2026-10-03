@@ -118,9 +118,9 @@ describe('html', function()
             virt_text = { { (' '):rep(15), 'Normal' } },
             virt_text_pos = 'inline',
         })
-        marks:add({ 0, 0 }, { 0, 18 }, util.conceal())
-        marks:add({ 0, 0 }, { 18, 27 }, { hl_eol = false, hl_group = 'RmH1' })
-        marks:add({ 0, 0 }, { 27, 32 }, util.conceal())
+        marks:add({ 0, 0 }, { 0, 19 }, util.conceal())
+        marks:add({ 0, 0 }, { 19, 28 }, { hl_eol = false, hl_group = 'RmH1' })
+        marks:add({ 0, 0 }, { 28, 33 }, util.conceal())
         util.assert_view(marks, { (' '):rep(15) .. 'rift.nvim' })
         vim.o.columns = 80
     end)
