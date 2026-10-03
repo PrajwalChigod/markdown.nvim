@@ -2,6 +2,10 @@
 
 ## Pre-release
 
+### Features
+
+- render common HTML tags (bold, italic, headings, links, images, etc.) in HTML blocks and inline within paragraphs
+
 ## 8.14.0 (2026-09-14)
 
 ### Features

@@ -24,11 +24,15 @@ function M.parse(ctx)
         ] @link
 
         (shortcut_link) @shortcut
+
+        ((inline) @html
+            (#lua-match? @html "<[/%a]"))
     ]])
     ---@type table<string, render.md.Render>
     local renders = {
         code = require('render-markdown.render.inline.code'),
         highlight = require('render-markdown.render.inline.highlight'),
+        html = require('render-markdown.render.inline.html'),
         link = require('render-markdown.render.inline.link'),
         shortcut = require('render-markdown.render.inline.shortcut'),
     }

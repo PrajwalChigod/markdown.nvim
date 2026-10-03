@@ -52,7 +52,7 @@ Improve viewing Markdown in Neovim
   - [markdown & markdown_inline](https://github.com/tree-sitter-grammars/tree-sitter-markdown):
     Used to parse `markdown` files
   - [html](https://github.com/tree-sitter/tree-sitter-html) (Optional):
-    Used to conceal `HTML` comments
+    Used to conceal `HTML` comments and render `HTML` blocks
   - [latex](https://github.com/latex-lsp/tree-sitter-latex) (Optional):
     Used to get `latex` blocks from `markdown` files
   - [yaml](https://github.com/tree-sitter-grammars/tree-sitter-yaml) (Optional):
@@ -945,10 +945,53 @@ require('render-markdown').setup({
         },
         -- HTML tags whose start and end will be hidden and icon shown.
         -- The key is matched against the tag name, value type below.
-        -- | icon            | optional icon inlined at start of tag           |
-        -- | highlight       | optional highlight for the icon                 |
-        -- | scope_highlight | optional highlight for item associated with tag |
-        tag = {},
+        -- | icon            | optional icon inlined at start of tag             |
+        -- | highlight       | optional highlight for the icon                   |
+        -- | scope_highlight | optional highlight for item associated with tag   |
+        -- | attribute       | optional attribute whose value is inlined at tag  |
+        -- Tags work inside HTML blocks and inline within paragraphs.
+        tag = {
+            -- Text styles
+            b = { scope_highlight = 'RenderMarkdownHtmlBold' },
+            strong = { scope_highlight = 'RenderMarkdownHtmlBold' },
+            i = { scope_highlight = 'RenderMarkdownHtmlItalic' },
+            em = { scope_highlight = 'RenderMarkdownHtmlItalic' },
+            cite = { scope_highlight = 'RenderMarkdownHtmlItalic' },
+            u = { scope_highlight = 'RenderMarkdownHtmlUnderline' },
+            ins = { scope_highlight = 'RenderMarkdownHtmlUnderline' },
+            s = { scope_highlight = 'RenderMarkdownHtmlStrike' },
+            del = { scope_highlight = 'RenderMarkdownHtmlStrike' },
+            strike = { scope_highlight = 'RenderMarkdownHtmlStrike' },
+            code = { scope_highlight = 'RenderMarkdownCodeInline' },
+            kbd = { scope_highlight = 'RenderMarkdownCodeInline' },
+            tt = { scope_highlight = 'RenderMarkdownCodeInline' },
+            mark = { scope_highlight = 'RenderMarkdownInlineHighlight' },
+            sub = {},
+            sup = {},
+            -- Links & images
+            a = { scope_highlight = 'RenderMarkdownLink' },
+            img = {
+                icon = '󰥶 ',
+                highlight = 'RenderMarkdownLink',
+                attribute = 'alt',
+            },
+            -- Headings
+            h1 = { scope_highlight = 'RenderMarkdownH1' },
+            h2 = { scope_highlight = 'RenderMarkdownH2' },
+            h3 = { scope_highlight = 'RenderMarkdownH3' },
+            h4 = { scope_highlight = 'RenderMarkdownH4' },
+            h5 = { scope_highlight = 'RenderMarkdownH5' },
+            h6 = { scope_highlight = 'RenderMarkdownH6' },
+            -- Structure, tags are only hidden
+            br = {},
+            p = {},
+            div = {},
+            span = {},
+            center = {},
+            picture = {},
+            details = {},
+            summary = { scope_highlight = 'RenderMarkdownHtmlBold' },
+        },
     },
     win_options = {
         -- Window options to use that change between rendered and raw view.
@@ -1785,6 +1828,10 @@ The table below shows all the highlight groups with their default link
 | RenderMarkdownMath            | @markup.math                       | Latex lines                |
 | RenderMarkdownIndent          | Whitespace                         | Indent icon                |
 | RenderMarkdownHtmlComment     | @comment                           | HTML comment inline text   |
+| RenderMarkdownHtmlBold        | @markup.strong                     | HTML bold tags             |
+| RenderMarkdownHtmlItalic      | @markup.italic                     | HTML italic tags           |
+| RenderMarkdownHtmlUnderline   | @markup.underline                  | HTML underline tags        |
+| RenderMarkdownHtmlStrike      | @markup.strikethrough              | HTML strikethrough tags    |
 | RenderMarkdownLink            | @markup.link.label.markdown_inline | Link icon                  |
 | RenderMarkdownLinkTitle       | @markup.link.markdown_inline       | Link title                 |
 | RenderMarkdownWikiLink        | RenderMarkdownLink                 | WikiLink icon              |

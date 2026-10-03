@@ -996,6 +996,7 @@ M.html = {}
 ---@field icon? string
 ---@field highlight? string
 ---@field scope_highlight? string
+---@field attribute? string
 
 ---@type render.md.html.Config
 M.html.default = {
@@ -1020,10 +1021,53 @@ M.html.default = {
     },
     -- HTML tags whose start and end will be hidden and icon shown.
     -- The key is matched against the tag name, value type below.
-    -- | icon            | optional icon inlined at start of tag           |
-    -- | highlight       | optional highlight for the icon                 |
-    -- | scope_highlight | optional highlight for item associated with tag |
-    tag = {},
+    -- | icon            | optional icon inlined at start of tag             |
+    -- | highlight       | optional highlight for the icon                   |
+    -- | scope_highlight | optional highlight for item associated with tag   |
+    -- | attribute       | optional attribute whose value is inlined at tag  |
+    -- Tags work inside HTML blocks and inline within paragraphs.
+    tag = {
+        -- Text styles
+        b = { scope_highlight = 'RenderMarkdownHtmlBold' },
+        strong = { scope_highlight = 'RenderMarkdownHtmlBold' },
+        i = { scope_highlight = 'RenderMarkdownHtmlItalic' },
+        em = { scope_highlight = 'RenderMarkdownHtmlItalic' },
+        cite = { scope_highlight = 'RenderMarkdownHtmlItalic' },
+        u = { scope_highlight = 'RenderMarkdownHtmlUnderline' },
+        ins = { scope_highlight = 'RenderMarkdownHtmlUnderline' },
+        s = { scope_highlight = 'RenderMarkdownHtmlStrike' },
+        del = { scope_highlight = 'RenderMarkdownHtmlStrike' },
+        strike = { scope_highlight = 'RenderMarkdownHtmlStrike' },
+        code = { scope_highlight = 'RenderMarkdownCodeInline' },
+        kbd = { scope_highlight = 'RenderMarkdownCodeInline' },
+        tt = { scope_highlight = 'RenderMarkdownCodeInline' },
+        mark = { scope_highlight = 'RenderMarkdownInlineHighlight' },
+        sub = {},
+        sup = {},
+        -- Links & images
+        a = { scope_highlight = 'RenderMarkdownLink' },
+        img = {
+            icon = '󰥶 ',
+            highlight = 'RenderMarkdownLink',
+            attribute = 'alt',
+        },
+        -- Headings
+        h1 = { scope_highlight = 'RenderMarkdownH1' },
+        h2 = { scope_highlight = 'RenderMarkdownH2' },
+        h3 = { scope_highlight = 'RenderMarkdownH3' },
+        h4 = { scope_highlight = 'RenderMarkdownH4' },
+        h5 = { scope_highlight = 'RenderMarkdownH5' },
+        h6 = { scope_highlight = 'RenderMarkdownH6' },
+        -- Structure, tags are only hidden
+        br = {},
+        p = {},
+        div = {},
+        span = {},
+        center = {},
+        picture = {},
+        details = {},
+        summary = { scope_highlight = 'RenderMarkdownHtmlBold' },
+    },
 }
 
 ---@return render.md.Schema
@@ -1034,6 +1078,7 @@ function M.html.schema()
             icon = { optional = true, type = 'string' },
             highlight = { optional = true, type = 'string' },
             scope_highlight = { optional = true, type = 'string' },
+            attribute = { optional = true, type = 'string' },
         },
     }
     return M.base.schema({

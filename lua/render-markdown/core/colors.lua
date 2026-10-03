@@ -45,6 +45,10 @@ M.colors = {
     Math            = '@markup.math',
     Indent          = 'Whitespace',
     HtmlComment     = '@comment',
+    HtmlBold        = '@markup.strong',
+    HtmlItalic      = '@markup.italic',
+    HtmlUnderline   = '@markup.underline',
+    HtmlStrike      = '@markup.strikethrough',
     -- Links
     Link            = '@markup.link.label.markdown_inline',
     LinkTitle       = '@markup.link.markdown_inline',
