@@ -154,8 +154,9 @@ describe('cursor', function()
     end)
 
     it('steps over a table drawn as virtual lines', function()
-        local body = '<tr><td>x</td></tr>'
-        setup({ 'a', '<table>', body, '</table>', 'b' })
+        -- rows sharing a line leave no line for the cursor to rest on
+        local row = '<tr><td>x</td></tr>'
+        setup({ 'a', '<table>', row .. row, '</table>', 'b' })
         util.set_row(1)
         press('j')
         assert_cursor(5)
@@ -180,6 +181,57 @@ describe('cursor', function()
         press('k')
         assert_cursor(2)
         vim.cmd('normal! zE')
+    end)
+
+    it('lets the window scroll past the last visible line', function()
+        local lines = { '<html>', '<body>' }
+        for i = 1, 30 do
+            lines[#lines + 1] = 'line ' .. i
+        end
+        vim.list_extend(lines, { '</body>', '</html>' })
+        setup(lines)
+        local height, scrolloff = vim.o.lines, vim.o.scrolloff
+        vim.o.lines, vim.o.scrolloff = 12, 4
+        util.set_row(20)
+
+        -- scrolling carries the cursor onto the hidden lines at the end, taking
+        -- it back to the last visible line would make the window jump back
+        local tops = {} ---@type integer[]
+        for _ = 1, 30 do
+            press('\5')
+            -- as Neovim does after every key, what it knows about the window
+            -- is otherwise left over from an earlier spec
+            vim.cmd.redraw()
+            tops[#tops + 1] = vim.fn.line('w0')
+        end
+        local row = vim.api.nvim_win_get_cursor(0)[1]
+        vim.o.lines, vim.o.scrolloff = height, scrolloff
+
+        for i = 2, #tops do
+            assert.is_true(tops[i] >= tops[i - 1], 'jumped back at ' .. i)
+        end
+        assert.same(#lines, tops[#tops])
+        assert.same(#lines, row)
+    end)
+
+    it('returns from the hidden lines at the end', function()
+        local lines = { '<html>', '<body>' }
+        for i = 1, 30 do
+            lines[#lines + 1] = 'line ' .. i
+        end
+        vim.list_extend(lines, { '</body>', '</html>' })
+        setup(lines)
+        local height, scrolloff = vim.o.lines, vim.o.scrolloff
+        vim.o.lines, vim.o.scrolloff = 12, 4
+        util.set_row(20)
+        for _ = 1, 30 do
+            press('\5')
+            vim.cmd.redraw()
+        end
+        press('k')
+        local row = vim.api.nvim_win_get_cursor(0)[1]
+        vim.o.lines, vim.o.scrolloff = height, scrolloff
+        assert.same(32, row)
     end)
 
     it('skips hidden lines in visual mode', function()

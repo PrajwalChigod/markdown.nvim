@@ -18,6 +18,7 @@ local function page(table_lines)
     return vim.list_extend({ 'x' }, table_lines)
 end
 
+---Marks of a table replaced as a whole with virtual lines
 ---@param marks renderer.test.Marks
 ---@param rows renderer.test.Range
 ---@param last_col integer
@@ -26,6 +27,48 @@ end
 local function replace(marks, rows, last_col, after, lines)
     marks:add(rows, { 0, last_col }, util.conceal_lines())
     marks:add(after, 0, { virt_lines = lines, virt_lines_above = true })
+end
+
+---Marks of a table drawn over the first line of each of its rows
+---@param marks renderer.test.Marks
+---@param rows renderer.test.Range rows of the table
+---@param kept integer[] row each table row is drawn over
+---@param after integer row the last virtual lines are drawn above
+---@param groups renderer.mark.Line[][] lines above the first row, then of each row
+local function draw(marks, rows, kept, after, groups)
+    ---@param row integer
+    ---@return integer
+    local function len(row)
+        return #vim.api.nvim_buf_get_lines(0, row, row + 1, false)[1]
+    end
+    ---@param first integer
+    ---@param last integer
+    local function hide(first, last)
+        if first <= last then
+            marks:add({ first, last }, { 0, len(last) }, util.conceal_lines())
+        end
+    end
+    local start = rows[1]
+    for i, row in ipairs(kept) do
+        hide(start, row - 1)
+        start = row + 1
+        local before = i == 1 and groups[1] or vim.list_slice(groups[i], 2)
+        if #before > 0 then
+            marks:add(row, 0, { virt_lines = before, virt_lines_above = true })
+        end
+        marks:add({ row, row }, { 0, len(row) }, util.conceal())
+        marks:add(row, 0, {
+            virt_text = groups[i + 1][1],
+            virt_text_pos = 'overlay',
+        })
+    end
+    local last = assert(rows[2], 'missing second row')
+    hide(start, last - 1)
+    hide(last, last)
+    local below = vim.list_slice(groups[#groups], 2)
+    if #below > 0 then
+        marks:add(after, 0, { virt_lines = below, virt_lines_above = true })
+    end
 end
 
 describe('html table', function()
@@ -37,37 +80,43 @@ describe('html table', function()
             '</table>',
         }))
         local marks = util.marks()
-        replace(marks, { 1, 4 }, 8, 5, {
+        draw(marks, { 1, 4 }, { 2, 3 }, 5, {
             {
                 {
-                    '┌───────┬─────┐',
-                    'RmTableHead',
+                    {
+                        '┌───────┬─────┐',
+                        'RmTableHead',
+                    },
                 },
             },
             {
-                { '│ ', 'RmTableHead' },
-                { 'Name', 'RmPadding' },
-                { '  │ ', 'RmTableHead' },
-                { 'Qty', 'RmPadding' },
-                { ' │', 'RmTableHead' },
-            },
-            {
                 {
-                    '├───────┼─────┤',
-                    'RmTableHead',
+                    { '│ ', 'RmTableHead' },
+                    { 'Name', 'RmPadding' },
+                    { '  │ ', 'RmTableHead' },
+                    { 'Qty', 'RmPadding' },
+                    { ' │', 'RmTableHead' },
+                },
+                {
+                    {
+                        '├───────┼─────┤',
+                        'RmTableHead',
+                    },
                 },
             },
             {
-                { '│ ', 'RmTableRow' },
-                { 'Apple', 'RmPadding' },
-                { ' │ ', 'RmTableRow' },
-                { '3', 'RmPadding' },
-                { '   │', 'RmTableRow' },
-            },
-            {
                 {
-                    '└───────┴─────┘',
-                    'RmTableRow',
+                    { '│ ', 'RmTableRow' },
+                    { 'Apple', 'RmPadding' },
+                    { ' │ ', 'RmTableRow' },
+                    { '3', 'RmPadding' },
+                    { '   │', 'RmTableRow' },
+                },
+                {
+                    {
+                        '└───────┴─────┘',
+                        'RmTableRow',
+                    },
                 },
             },
         })
@@ -100,17 +149,31 @@ describe('html table', function()
             virt_text_pos = 'inline',
         })
         marks:add({ 2, 2 }, { 20, 25 }, util.conceal())
-        replace(marks, { 1, 3 }, 8, 4, {
-            { { '┌────────────┐', 'RmTableRow' } },
+        draw(marks, { 1, 3 }, { 2 }, 4, {
             {
-                { '│ ', 'RmTableRow' },
-                { 'Pear', 'RmPadding:RmHtmlBold' },
-                { ' ', 'RmPadding' },
-                { '&', '' },
-                { ' fig', 'RmPadding' },
-                { ' │', 'RmTableRow' },
+                {
+                    {
+                        '┌────────────┐',
+                        'RmTableRow',
+                    },
+                },
             },
-            { { '└────────────┘', 'RmTableRow' } },
+            {
+                {
+                    { '│ ', 'RmTableRow' },
+                    { 'Pear', 'RmPadding:RmHtmlBold' },
+                    { ' ', 'RmPadding' },
+                    { '&', '' },
+                    { ' fig', 'RmPadding' },
+                    { ' │', 'RmTableRow' },
+                },
+                {
+                    {
+                        '└────────────┘',
+                        'RmTableRow',
+                    },
+                },
+            },
         })
         util.assert_view(marks, {
             'x',
@@ -147,9 +210,8 @@ describe('html table', function()
             '└───────┴─────┘',
         }
         local marks = util.marks()
-        marks:add({ 1, 13 }, { 0, 8 }, util.conceal_lines())
-        marks:add(14, 0, {
-            virt_lines = {
+        draw(marks, { 1, 13 }, { 4, 10, 11 }, 14, {
+            {
                 { { 'Fruit', 'RmPadding' } },
                 {
                     {
@@ -157,6 +219,8 @@ describe('html table', function()
                         'RmTableHead',
                     },
                 },
+            },
+            {
                 {
                     { '│ ', 'RmTableHead' },
                     { 'Name', 'RmPadding' },
@@ -170,6 +234,8 @@ describe('html table', function()
                         'RmTableHead',
                     },
                 },
+            },
+            {
                 {
                     { '│ ', 'RmTableRow' },
                     { 'Apple', 'RmPadding' },
@@ -177,6 +243,8 @@ describe('html table', function()
                     { '3', 'RmPadding' },
                     { ' │', 'RmTableRow' },
                 },
+            },
+            {
                 {
                     { '│ ', 'RmTableRow' },
                     { 'Pear', 'RmPadding' },
@@ -189,7 +257,6 @@ describe('html table', function()
                     },
                 },
             },
-            virt_lines_above = true,
         })
         util.assert_view(marks, screen)
     end)
@@ -239,6 +306,101 @@ describe('html table', function()
             '│ A │ B │',
             '└───┴───┘',
         })
+    end)
+
+    it('rows sharing a line are drawn as virtual lines', function()
+        setup(page({
+            '<table>',
+            '<tr><td>a</td></tr><tr><td>b</td></tr>',
+            '</table>',
+        }))
+        local marks = util.marks()
+        replace(marks, { 1, 3 }, 8, 4, {
+            { { '┌───┐', 'RmTableRow' } },
+            {
+                { '│ ', 'RmTableRow' },
+                { 'a', 'RmPadding' },
+                { ' │', 'RmTableRow' },
+            },
+            {
+                { '│ ', 'RmTableRow' },
+                { 'b', 'RmPadding' },
+                { ' │', 'RmTableRow' },
+            },
+            { { '└───┘', 'RmTableRow' } },
+        })
+        util.assert_view(marks, {
+            'x',
+            '┌───┐',
+            '│ a │',
+            '│ b │',
+            '└───┘',
+        })
+    end)
+
+    it('a row wider than the window is drawn as virtual lines', function()
+        -- the line of the row wraps, so it would take two lines on screen
+        vim.o.wrap = true
+        local cell = ('<i>a</i>'):rep(12)
+        setup(
+            page({ '<table>', '<tr><td>' .. cell .. '</td></tr>', '</table>' })
+        )
+        util.assert_screen({
+            'x',
+            '┌──────────────┐',
+            '│ aaaaaaaaaaaa │',
+            '└──────────────┘',
+        })
+        -- nothing of the table is left for the cursor to rest on
+        vim.cmd.normal({ 'j', bang = true })
+        vim.api.nvim_exec_autocmds('CursorMoved', {})
+        vim.wait(0)
+        local row = vim.api.nvim_win_get_cursor(0)[1]
+        vim.o.wrap = false
+        assert.same(1, row)
+    end)
+
+    it('the cursor moves through the rows', function()
+        setup(page({
+            '<table>',
+            '  <tr><th>Name</th></tr>',
+            '  <tr>',
+            '    <td>Apple</td>',
+            '  </tr>',
+            '  <tr><td>Pear</td></tr>',
+            '</table>',
+            'y',
+        }))
+        local screen = {
+            'x',
+            '┌───────┐',
+            '│ Name  │',
+            '├───────┤',
+            '│ Apple │',
+            '│ Pear  │',
+            '└───────┘',
+            'y',
+        }
+        ---@param keys string
+        ---@return integer
+        local function press(keys)
+            vim.cmd.normal({ keys, bang = true })
+            vim.api.nvim_exec_autocmds('CursorMoved', {})
+            vim.wait(0)
+            return vim.api.nvim_win_get_cursor(0)[1]
+        end
+        local rows = {} ---@type integer[]
+        for _ = 1, 4 do
+            rows[#rows + 1] = press('j')
+        end
+        assert.same({ 3, 4, 7, 9 }, rows)
+        util.assert_screen(screen)
+        rows = {}
+        for _ = 1, 4 do
+            rows[#rows + 1] = press('k')
+        end
+        assert.same({ 7, 4, 3, 1 }, rows)
+        util.assert_screen(screen)
     end)
 
     it('keeps the indentation of the table', function()
@@ -374,16 +536,12 @@ describe('html table', function()
     end)
 
     it('shows the source under the cursor', function()
-        -- the cursor only reaches a replaced row when it does not skip them
+        -- a table replaced as a whole, which the cursor only reaches when it
+        -- does not skip hidden lines
         local opts = { anti_conceal = { skip_hidden = false } }
-        setup(page({ '<table>', '  <tr><td>a</td></tr>', '</table>' }), opts)
+        setup(page({ '<table><tr><td>a</td></tr></table>' }), opts)
         util.set_row(2)
-        util.assert_screen({
-            'x',
-            '<table>',
-            '  <tr><td>a</td></tr>',
-            '</table>',
-        })
+        util.assert_screen({ 'x', '<table><tr><td>a</td></tr></table>' })
     end)
 
     it('also renders inside markdown', function()

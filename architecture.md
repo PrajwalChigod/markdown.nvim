@@ -241,8 +241,19 @@ with `5j` whether or not hidden lines lie between. Only the landing line is
 corrected. It runs in normal and visual modes and can be turned off with
 `anti_conceal.skip_hidden`.
 
-Rows hidden by a replace mark are skipped like any other, so an HTML table or
-a wrapped table row stays drawn and the cursor steps over it. `Updater:hide`
+When nothing visible lies ahead, at either end of the buffer, the cursor goes
+back to the last visible row. One case is left alone: scrolling can carry the
+cursor onto hidden rows at the end of the buffer, because Neovim keeps it
+`scrolloff` lines below the top of the window. The last visible row is then
+closer to the top than that, and putting the cursor back on it makes Neovim
+undo the scroll, so the window would bounce instead of reaching the end.
+`cursor.fits` measures the screen lines above the row and the cursor only goes
+back when there are enough, otherwise it stays on the hidden row, where Neovim
+put it.
+
+Rows hidden by a replace mark are skipped like any other, so a wrapped table
+row, or an HTML table replaced as a whole, stays drawn and the cursor steps
+over it. `Updater:hide`
 has an older answer to the same problem, it hides a replace mark whose first
 row holds the cursor so that the source shows. With skipping on the cursor
 never rests there, so that rule only acts when skipping is off.
@@ -345,10 +356,21 @@ extended: new element behaviour goes in its own renderer.
 handler runs it after every other capture, once the inline marks exist. Those
 marks only exist for rows in the view, which is why a table is drawn only when
 `View:covers` says it lies fully inside. It reads cell text with
-`lib/display.lua`, lays the grid out with the helpers of `parser/table.lua`
-that markdown wrapped rows use, and replaces the whole element with one
-`marks:replace`. A table it cannot draw (spans, a table inside a cell, an end
-tag missing) is left as source.
+`lib/display.lua` and lays the grid out with the helpers of `parser/table.lua`
+that markdown wrapped rows use. A table it cannot draw (spans, a table inside
+a cell, an end tag missing) is left as source.
+
+The grid is put on screen in one of two ways. Where it can be, each row is
+drawn over the first line of its `tr`: the text of that line is concealed, the
+row is laid over it as overlay virtual text, and every other line of the table
+is hidden. Borders, and the further lines of a row that wraps, are virtual
+lines above the next kept line, and what follows the last row is a replace mark
+on the end tag. The rows are then lines of the buffer, which the cursor can
+rest on and move through. This needs every `tr` to start on a line of its own
+between the tags of the table, and that line to fit the window, because a line
+that wraps takes more than one line on screen even with its text concealed.
+Otherwise the whole element is replaced with one `marks:replace`, and the
+cursor steps over it.
 
 ## Formats
 

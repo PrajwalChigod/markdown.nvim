@@ -224,3 +224,14 @@ cells span lines. These tables are left as source:
 
 Cells are plain text, so block content inside a cell is flattened to one line
 of wrapped text.
+
+## The Cursor Cannot Enter Some HTML Tables
+
+Each row of a table is drawn over the first line of its `<tr>`, so the cursor
+moves through a table row by row. When that is not possible the whole table is
+drawn as virtual lines, which cannot hold the cursor, and with anti conceal off
+the cursor steps over the table. This is the case when:
+
+- two rows share a line, or a row shares a line with `<table>` or `</table>`
+- the first line of a row is wider than the window and `wrap` is on, as a line
+  that wraps takes more than one line on screen even when its text is hidden

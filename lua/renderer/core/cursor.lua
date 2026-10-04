@@ -41,9 +41,19 @@ function M.skip(buf, win, mode)
     if not vim.tbl_contains(M.modes, mode) or not M.hidden(win, row) then
         return
     end
-    local target = M.find(buf, win, row, step) or M.find(buf, win, row, -step)
+    local target = M.find(buf, win, row, step)
     if target then
         M.move(buf, win, target)
+    else
+        -- nothing visible lies ahead, so go back to the last line that is
+        target = M.find(buf, win, row, -step)
+        if target and M.fits(win, target, step) then
+            M.move(buf, win, target)
+        else
+            target = nil
+        end
+    end
+    if target then
         M.last[win].row = target
     end
 end
@@ -85,6 +95,46 @@ function M.find(buf, win, row, step)
         row = row + step
     end
     return nil
+end
+
+---@private
+---Whether the cursor can go back to a row behind it without the window
+---scrolling. Neovim keeps the cursor 'scrolloff' lines below the top of the
+---window, and when scrolling carries the cursor onto hidden lines at the end of
+---the buffer the last visible row is closer to the top than that. Putting the
+---cursor back on it would make Neovim undo the scroll, so the window could never
+---get past that point. The cursor is then left on the hidden line, where Neovim
+---put it
+---@param win integer
+---@param row integer
+---@param step -1|1 direction the cursor was travelling
+---@return boolean
+function M.fits(win, row, step)
+    -- going back down only happens at the start of the buffer
+    if step == -1 then
+        return true
+    end
+    local view = vim.api.nvim_win_call(win, vim.fn.winsaveview)
+    local top = view.topline - 1
+    if row < top then
+        return false
+    end
+    local function height(first, last)
+        local range = { start_row = first, end_row = last }
+        return vim.api.nvim_win_text_height(win, range)
+    end
+    -- nothing can scroll into view above, Neovim then lets the cursor be
+    if top == 0 or height(0, top - 1).all == 0 then
+        return true
+    end
+    local above = view.topfill
+    if row > top then
+        -- virtual lines above the top row are only shown in part
+        above = above + height(top, row - 1).all - height(top, top).fill
+    end
+    local offset = vim.api.nvim_get_option_value('scrolloff', { win = win })
+    local limit = math.floor((vim.api.nvim_win_get_height(win) - 1) / 2)
+    return above >= math.min(offset, limit)
 end
 
 ---@private
