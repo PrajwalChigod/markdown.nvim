@@ -935,6 +935,10 @@ require('renderer').setup({
         pre = true,
         -- Replace hr with a line, uses `dash` config.
         rule = true,
+        -- Replace table elements with a bordered grid, uses `pipe_table` config.
+        -- Tables with colspan / rowspan or another table inside, and tables that do
+        -- not fit fully inside the visible range of the window are left as is.
+        table = true,
         -- Replace entities like &amp; and &#169; with the character they stand for.
         entity = true,
         comment = {
@@ -1918,13 +1922,14 @@ markdown, an HTML file gets:
 - quote icons for `<blockquote>`, using the `quote` config
 - a background for `<pre>`, using the `code` config
 - a line for `<hr>`, using the `dash` config
+- a bordered grid for `<table>`, using the `pipe_table` config
 - icons and backgrounds for `<h1>` to `<h6>`, using the `heading` config
 - the `link.hyperlink` icon for `<a href>`
 - entities like `&amp;` and `&#169;` shown as the character they stand for
 
 The page structure rules and the heading icons only apply to a whole HTML file.
 The rest also apply to HTML inside markdown, and can be turned off with the `html`
-options `structure`, `list`, `quote`, `pre`, `rule` and `entity`.
+options `structure`, `list`, `quote`, `pre`, `rule`, `table` and `entity`.
 
 See [Limitations](doc/limitations.md) for what is not rendered.
 

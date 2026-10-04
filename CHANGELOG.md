@@ -7,6 +7,13 @@
 - render plain HTML files when `html` is added to `file_types`: page structure is
   hidden, and lists, quotes, `<pre>`, rules, headings and entities render like
   their markdown counterparts, each switchable under `html`
+- render HTML `<table>` as a bordered grid using the `pipe_table` config, with
+  cell text wrapped to fit the window, switch with `html.table`
+
+### Bug Fixes
+
+- HTML `<head>` titles and `<style>` / `<script>` summaries no longer show next
+  to their source when `conceallevel` is below 2
 
 ## 0.1.2 (2026-10-04)
 

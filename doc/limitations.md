@@ -209,7 +209,18 @@ Marks decorate the text of the buffer, they cannot move it. Minified HTML, or a
 page with many elements on one line, is still hard to read. A reader view for
 this is planned.
 
-## HTML Tables Are Not Rendered
+## Some HTML Tables Are Not Rendered
 
-`<table>` is not rendered in place. Cells span lines and nest, which marks cannot
-align. Use the planned reader view for pages with tables.
+A `<table>` is replaced by virtual lines, so it is drawn as a grid even when its
+cells span lines. These tables are left as source:
+
+- tables with `colspan` or `rowspan` cells, which do not fit a grid
+- tables with another table inside a cell, the inner table still renders
+- tables that share a line with other text
+- tables that do not fit fully inside the visible lines of the window
+  (including the margin around it), as the text of a cell comes from the marks
+  of the tags inside it
+- tables when `conceallevel` is below 2, as Neovim does not hide lines then
+
+Cells are plain text, so block content inside a cell is flattened to one line
+of wrapped text.

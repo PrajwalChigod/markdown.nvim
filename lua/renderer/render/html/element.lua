@@ -38,6 +38,17 @@ function Render.name_of(node)
     return name and name.text:lower() or nil
 end
 
+---Value of an attribute in the text of a tag
+---@param text string
+---@param name string
+---@return string?
+function Render.attribute(text, name)
+    local pattern = '[%s"\']' .. name .. '%s*=%s*'
+    return text:match(pattern .. '"([^"]*)"')
+        or text:match(pattern .. "'([^']*)'")
+        or text:match(pattern .. '([^%s>"\']+)')
+end
+
 ---@private
 ---@param node renderer.Node
 ---@return renderer.Node?
@@ -56,6 +67,16 @@ function Render:alone(node)
     end
     return not line(node.start_row):sub(1, node.start_col):find('%S')
         and not line(node.end_row):sub(node.end_col + 1):find('%S')
+end
+
+---Whether the lines of a node can be replaced with virtual lines. Neovim only
+---hides lines from conceallevel 2, below that the source would stay on screen
+---next to its replacement.
+---@protected
+---@param node renderer.Node
+---@return boolean
+function Render:replaceable(node)
+    return self.context.conceal.level > 1 and self:alone(node)
 end
 
 ---Hide the lines of a node when it is alone on them, otherwise just the node

@@ -281,27 +281,40 @@ so its renderers fall in two groups. The `tag` capture goes to
 then to one element renderer chosen by tag name. Element renderers extend
 `render/html/element.lua`, which resolves the tag name, start tag and end tag
 and offers `alone` and `hide`: a tag alone on its lines is hidden with
-`conceal_lines`, otherwise only the tag is concealed.
+`conceal_lines`, otherwise only the tag is concealed. Renderers that replace
+lines with virtual lines (`head`, `raw`, `table`) also check `replaceable`,
+which needs `conceallevel` 2 or more because Neovim does not hide lines below
+that.
 
-| Renderer in `render/html/` | Applies to                              | Group     | Switch                |
-| -------------------------- | --------------------------------------- | --------- | --------------------- |
-| `doctype.lua`              | `doctype`                               | structure | `html.structure`      |
-| `page.lua`                 | `html`, `body`                          | structure | `html.structure`      |
-| `head.lua`                 | `head`, shows the title                 | structure | `html.structure`      |
-| `raw.lua`                  | `script`, `style` summaries             | structure | `html.structure`      |
-| `list.lua`                 | `ul`, `ol`, `li`                        | block     | `html.list`, `bullet` |
-| `quote.lua`                | `blockquote`                            | block     | `html.quote`, `quote` |
-| `pre.lua`                  | `pre`                                   | block     | `html.pre`, `code`    |
-| `rule.lua`                 | `hr`                                    | block     | `html.rule`, `dash`   |
-| `heading.lua`              | `h1` to `h6`, `.html` file only         | structure | `heading`             |
-| `link.lua`                 | `a` with `href`                         | block     | `link`                |
-| `entity.lua`               | `entity`, decoded by `lib/entities.lua` | block     | `html.entity`         |
+| Renderer in `render/html/` | Applies to                              | Group     | Switch                     |
+| -------------------------- | --------------------------------------- | --------- | -------------------------- |
+| `doctype.lua`              | `doctype`                               | structure | `html.structure`           |
+| `page.lua`                 | `html`, `body`                          | structure | `html.structure`           |
+| `head.lua`                 | `head`, shows the title                 | structure | `html.structure`           |
+| `raw.lua`                  | `script`, `style` summaries             | structure | `html.structure`           |
+| `list.lua`                 | `ul`, `ol`, `li`                        | block     | `html.list`, `bullet`      |
+| `quote.lua`                | `blockquote`                            | block     | `html.quote`, `quote`      |
+| `pre.lua`                  | `pre`                                   | block     | `html.pre`, `code`         |
+| `rule.lua`                 | `hr`                                    | block     | `html.rule`, `dash`        |
+| `table.lua`                | `table`, drawn from `pipe_table` config | block     | `html.table`, `pipe_table` |
+| `heading.lua`              | `h1` to `h6`, `.html` file only         | structure | `heading`                  |
+| `link.lua`                 | `a` with `href`                         | block     | `link`                     |
+| `entity.lua`               | `entity`, decoded by `lib/entities.lua` | block     | `html.entity`              |
 
 Structure renderers and `heading.lua` return false from `setup()` unless
 `context.format.name == 'html'`, so a markdown buffer containing `<html>` or
 `<body>` keeps those lines. Block renderers run wherever HTML appears and reuse
 the config and highlights of their markdown counterparts. `html.tag` is not
 extended: new element behaviour goes in its own renderer.
+
+`table.lua` is built from the marks of what is inside its cells, so the
+handler runs it after every other capture, once the inline marks exist. Those
+marks only exist for rows in the view, which is why a table is drawn only when
+`View:covers` says it lies fully inside. It reads cell text with
+`lib/display.lua`, lays the grid out with the helpers of `parser/table.lua`
+that markdown wrapped rows use, and replaces the whole element with one
+`marks:replace`. A table it cannot draw (spans, a table inside a cell, an end
+tag missing) is left as source.
 
 ## Formats
 
