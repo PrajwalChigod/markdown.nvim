@@ -346,8 +346,14 @@ describe('table wrapping', function()
         })
     end)
 
+    -- the cursor only reaches a replaced row when it does not skip them
+    local no_skip = {
+        pipe_table = { cell = 'trimmed' },
+        anti_conceal = { skip_hidden = false },
+    }
+
     it('cursor on wrapped row', function()
-        util.setup.text(mixed, { pipe_table = { cell = 'trimmed' } })
+        util.setup.text(mixed, no_skip)
         util.assert_screen(mixed_rendered)
 
         util.set_row(6)
@@ -370,7 +376,7 @@ describe('table wrapping', function()
 
     it('cursor on wrapped row with nowrap', function()
         vim.o.wrap = false
-        util.setup.text(mixed, { pipe_table = { cell = 'trimmed' } })
+        util.setup.text(mixed, no_skip)
         util.set_row(6)
         util.assert_screen({
             'BEFORE',
@@ -383,6 +389,16 @@ describe('table wrapping', function()
             '└───┴───┴──────────────────────────────┘',
             'AFTER',
         })
+    end)
+
+    it('cursor skips a wrapped row', function()
+        util.setup.text(mixed, { pipe_table = { cell = 'trimmed' } })
+        util.set_row(5)
+        vim.cmd.normal({ 'j', bang = true })
+        vim.api.nvim_exec_autocmds('CursorMoved', {})
+        vim.wait(0)
+        assert.same(7, vim.api.nvim_win_get_cursor(0)[1])
+        util.assert_screen(mixed_rendered)
     end)
 
     it('heading after table', function()

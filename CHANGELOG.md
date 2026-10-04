@@ -2,6 +2,31 @@
 
 ## Pre-release
 
+### Features
+
+- render plain HTML files when `html` is added to `file_types`: page structure is
+  hidden, and lists, quotes, `<pre>`, rules, headings and entities render like
+  their markdown counterparts, each switchable under `html`
+- render HTML `<table>` as a bordered grid using the `pipe_table` config, with
+  cell text wrapped to fit the window, switch with `html.table`
+
+### Bug Fixes
+
+- the cursor no longer stalls on lines that are hidden completely, such as the
+  head of an HTML file, when anti conceal is off: it moves on to the next visible
+  line. This also steps over wrapped table rows instead of showing their source,
+  switch with `anti_conceal.skip_hidden`. Scrolling is not held back by it: when
+  scrolling carries the cursor onto hidden lines at the end of a buffer it stays
+  there, so the window still reaches the end
+- the title of an HTML page keeps its own line when it has one, so the cursor can
+  reach the first line of the page
+- the rows of an HTML table are drawn over the first line of each `<tr>`, so the
+  cursor moves through a table row by row instead of stepping over it. A table
+  whose rows share a line, or have a first line wider than the window, is still
+  drawn as virtual lines
+- HTML `<head>` titles and `<style>` / `<script>` summaries no longer show next
+  to their source when `conceallevel` is below 2
+
 ## 0.1.2 (2026-10-04)
 
 ### Internal

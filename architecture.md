@@ -219,6 +219,45 @@ stand in for them, used by wrapped table rows. Neovim does not draw virtual
 lines attached to a hidden row, so `lib/replacements.lua` moves them above the
 next visible row.
 
+`core/cursor.lua` keeps the cursor off lines Neovim hides with `conceal_lines`.
+Neovim does not skip them itself: `j` moves one buffer line at a time, so the
+cursor walks through a hidden head or list tag with nothing changing on
+screen. `cursor.skip` asks `nvim_win_text_height` whether the cursor row has
+height 0, which already accounts for `concealcursor` and so is false whenever
+anti-conceal reveals the row, then moves to the nearest visible row in the
+direction of travel, keeping the wanted column. It is called from two places:
+
+- the `CursorMoved` autocmd in `core/manager.lua`, before the update is
+  scheduled. Neovim draws the screen between the autocmd and a scheduled
+  callback, so moving the cursor any later shows it on the hidden line for one
+  frame;
+- the end of `Updater:display`, for marks that are drawn under a cursor that
+  did not move: the first render, and a jump into rows that had not been
+  parsed.
+
+A count is left as Neovim applies it, in buffer lines, because that is what
+the number column shows: with `relativenumber` the line labelled 5 is reached
+with `5j` whether or not hidden lines lie between. Only the landing line is
+corrected. It runs in normal and visual modes and can be turned off with
+`anti_conceal.skip_hidden`.
+
+When nothing visible lies ahead, at either end of the buffer, the cursor goes
+back to the last visible row. One case is left alone: scrolling can carry the
+cursor onto hidden rows at the end of the buffer, because Neovim keeps it
+`scrolloff` lines below the top of the window. The last visible row is then
+closer to the top than that, and putting the cursor back on it makes Neovim
+undo the scroll, so the window would bounce instead of reaching the end.
+`cursor.fits` measures the screen lines above the row and the cursor only goes
+back when there are enough, otherwise it stays on the hidden row, where Neovim
+put it.
+
+Rows hidden by a replace mark are skipped like any other, so a wrapped table
+row, or an HTML table replaced as a whole, stays drawn and the cursor steps
+over it. `Updater:hide`
+has an older answer to the same problem, it hides a replace mark whose first
+row holds the cursor so that the source shows. With skipping on the cursor
+never rests there, so that rule only acts when skipping is off.
+
 ## Handlers and renderers
 
 `core/handlers.lua` walks every language tree in the buffer, including
@@ -264,7 +303,7 @@ capture name to renderer, and a loop.
 | ----------------------------- | ------------------------------------------------------------------------------------------ |
 | `handler/markdown.lua`        | code, dash, document, footnote, heading, list, paragraph, quote, section, table            |
 | `handler/markdown_inline.lua` | code, highlight, link, shortcut                                                            |
-| `handler/html.lua`            | comment, tag                                                                               |
+| `handler/html.lua`            | comment, tag, doctype, entity, raw                                                         |
 | `handler/yaml.lua`            | bullet, link                                                                               |
 | `handler/latex.lua`           | no query: collects formula nodes, converts them with an external tool, emits virtual lines |
 
@@ -272,6 +311,66 @@ A renderer extends `render/base.lua` and implements two methods. `setup()`
 reads config and returns false to skip the node. `run()` emits marks.
 `Base:execute` creates an instance per node and returns what `setup()`
 returned.
+
+### HTML renderers
+
+`handler/html.lua` runs for HTML inside markdown and for a whole `.html` file,
+so its renderers fall in two groups. The `tag` capture goes to
+`render/html/tag.lua`, which hides tags and applies the `html.tag` config, and
+then to one element renderer chosen by tag name. Element renderers extend
+`render/html/element.lua`, which resolves the tag name, start tag and end tag
+and offers `alone` and `hide`: a tag alone on its lines is hidden with
+`conceal_lines`, otherwise only the tag is concealed. Renderers that replace
+lines with virtual lines (`head`, `raw`, `table`) also check `replaceable`,
+which needs `conceallevel` 2 or more because Neovim does not hide lines below
+that.
+
+A virtual line cannot hold the cursor, so `head.lua` avoids one where it can:
+when the `title` has a line of its own, that line stays, with its tags
+concealed, and only the lines around it are hidden. The title is then a real
+line the cursor can rest on and the first line of the page. A title that
+shares its line with other tags is still shown as a virtual line.
+
+| Renderer in `render/html/` | Applies to                              | Group     | Switch                     |
+| -------------------------- | --------------------------------------- | --------- | -------------------------- |
+| `doctype.lua`              | `doctype`                               | structure | `html.structure`           |
+| `page.lua`                 | `html`, `body`                          | structure | `html.structure`           |
+| `head.lua`                 | `head`, shows the title                 | structure | `html.structure`           |
+| `raw.lua`                  | `script`, `style` summaries             | structure | `html.structure`           |
+| `list.lua`                 | `ul`, `ol`, `li`                        | block     | `html.list`, `bullet`      |
+| `quote.lua`                | `blockquote`                            | block     | `html.quote`, `quote`      |
+| `pre.lua`                  | `pre`                                   | block     | `html.pre`, `code`         |
+| `rule.lua`                 | `hr`                                    | block     | `html.rule`, `dash`        |
+| `table.lua`                | `table`, drawn from `pipe_table` config | block     | `html.table`, `pipe_table` |
+| `heading.lua`              | `h1` to `h6`, `.html` file only         | structure | `heading`                  |
+| `link.lua`                 | `a` with `href`                         | block     | `link`                     |
+| `entity.lua`               | `entity`, decoded by `lib/entities.lua` | block     | `html.entity`              |
+
+Structure renderers and `heading.lua` return false from `setup()` unless
+`context.format.name == 'html'`, so a markdown buffer containing `<html>` or
+`<body>` keeps those lines. Block renderers run wherever HTML appears and reuse
+the config and highlights of their markdown counterparts. `html.tag` is not
+extended: new element behaviour goes in its own renderer.
+
+`table.lua` is built from the marks of what is inside its cells, so the
+handler runs it after every other capture, once the inline marks exist. Those
+marks only exist for rows in the view, which is why a table is drawn only when
+`View:covers` says it lies fully inside. It reads cell text with
+`lib/display.lua` and lays the grid out with the helpers of `parser/table.lua`
+that markdown wrapped rows use. A table it cannot draw (spans, a table inside
+a cell, an end tag missing) is left as source.
+
+The grid is put on screen in one of two ways. Where it can be, each row is
+drawn over the first line of its `tr`: the text of that line is concealed, the
+row is laid over it as overlay virtual text, and every other line of the table
+is hidden. Borders, and the further lines of a row that wraps, are virtual
+lines above the next kept line, and what follows the last row is a replace mark
+on the end tag. The rows are then lines of the buffer, which the cursor can
+rest on and move through. This needs every `tr` to start on a line of its own
+between the tags of the table, and that line to fit the window, because a line
+that wraps takes more than one line on screen even with its text concealed.
+Otherwise the whole element is replaced with one `marks:replace`, and the
+cursor steps over it.
 
 ## Formats
 
@@ -343,8 +442,8 @@ The handler map is keyed by language and shared between formats.
 `format.handler(language)` looks across all formats, and if two formats name
 the same language they must name the same module; the registry asserts this.
 
-No format sets `defaults` or `scroll` yet and nothing reads `context.format`
-yet. They are there for the formats planned in part 2.
+No format sets `defaults` or `scroll` yet. They are there for the formats
+planned in part 2. `context.format` is read by the HTML structure renderers.
 
 ## Marks
 
@@ -539,9 +638,9 @@ Nothing in this part exists in the code. Do not require these modules or rely
 on these fields. When one of them is built, follow the design here and move
 its section into part 1.
 
-The goal is to render more than markdown: plain HTML files, CSV, diagrams
-inside markdown, and documents that are not text (DOCX, PDF). The format
-registry in part 1 is the first step and is done. Two components remain:
+The goal is to render more than markdown: CSV, diagrams inside markdown, and
+documents that are not text (DOCX, PDF). The format registry and plain HTML
+files, described in part 1, are done. Two components remain:
 
 | Component     | Module                          | Built together with its first user |
 | ------------- | ------------------------------- | ---------------------------------- |
@@ -596,11 +695,6 @@ add to it:
       },
   }
   ```
-
-- **`context.format` gets its first user with plain HTML files.**
-  `handler/html.lua` runs for HTML inside markdown and for a `.html` file.
-  Hiding `<html>` and `<body>` is right in the second and wrong in the first,
-  so those renderers will check `context.format.name`.
 
 - **A `source` field for model B**, read by `convert/init.lua`:
 
@@ -732,7 +826,7 @@ lua/renderer/
   core/reader.lua    NEW   HTML reader view
   core/manager.lua   CHG   size check for converted buffers
   health.lua         CHG   converters from registry
-  handler/, render/  ADD   csv and mermaid handlers, html block renderers
+  handler/, render/  ADD   csv and mermaid handlers
   settings.lua       ADD   csv, mermaid, convert, reader blocks
 ```
 
