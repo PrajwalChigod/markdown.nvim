@@ -1,4 +1,5 @@
 local Base = require('renderer.render.base')
+local Element = require('renderer.render.html.element')
 local env = require('renderer.lib.env')
 local str = require('renderer.lib.str')
 
@@ -34,7 +35,7 @@ end
 ---@param start_tag renderer.Node
 ---@param end_tag? renderer.Node
 function Render:align(name, start_tag, end_tag)
-    local align = Render.attribute(start_tag.text, 'align')
+    local align = Element.attribute(start_tag.text, 'align')
     if name:lower() == 'center' then
         align = 'center'
     end
@@ -104,7 +105,7 @@ function Render.visible(config, line)
         local img = config.tag.img
         local alt = img
             and img.attribute
-            and Render.attribute(tag, img.attribute)
+            and Element.attribute(tag, img.attribute)
         return (img and img.icon or '') .. (alt or '')
     end)
     text = text:gsub('<[^>]*>', '')
@@ -127,7 +128,7 @@ function Render.apply(config, marks, name, start_tag, end_tag)
 
     local text = tag.icon or ''
     if tag.attribute then
-        local value = Render.attribute(start_tag.text, tag.attribute)
+        local value = Element.attribute(start_tag.text, tag.attribute)
         text = text .. (value or '')
     end
     if text ~= '' and tag.highlight then
@@ -144,17 +145,6 @@ function Render.apply(config, marks, name, start_tag, end_tag)
             hl_group = tag.scope_highlight,
         })
     end
-end
-
----@private
----@param text string
----@param name string
----@return string?
-function Render.attribute(text, name)
-    local pattern = '[%s"\']' .. name .. '%s*=%s*'
-    return text:match(pattern .. '"([^"]*)"')
-        or text:match(pattern .. "'([^']*)'")
-        or text:match(pattern .. '([^%s>"\']+)')
 end
 
 return Render

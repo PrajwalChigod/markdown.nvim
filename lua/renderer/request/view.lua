@@ -55,6 +55,20 @@ function View:overlaps(node)
     return false
 end
 
+---Whether the node lies fully inside the view, so the marks of everything
+---within it exist
+---@param node TSNode
+---@return boolean
+function View:covers(node)
+    local start_row, _, end_row = node:range()
+    for _, range in ipairs(self.ranges) do
+        if interval.contains(range, { start_row, end_row }) then
+            return true
+        end
+    end
+    return false
+end
+
 ---@param parser vim.treesitter.LanguageTree
 ---@param callback fun()
 function View:parse(parser, callback)

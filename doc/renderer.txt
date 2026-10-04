@@ -994,6 +994,10 @@ Default Configuration ~
             pre = true,
             -- Replace hr with a line, uses `dash` config.
             rule = true,
+            -- Replace table elements with a bordered grid, uses `pipe_table` config.
+            -- Tables with colspan / rowspan or another table inside, and tables that do
+            -- not fit fully inside the visible range of the window are left as is.
+            table = true,
             -- Replace entities like &amp; and &#169; with the character they stand for.
             entity = true,
             comment = {

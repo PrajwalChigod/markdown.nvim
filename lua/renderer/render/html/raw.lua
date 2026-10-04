@@ -16,7 +16,7 @@ Render.icons = {
 ---@return boolean
 function Render:enabled()
     return self:structure()
-        and self:alone(self.node)
+        and self:replaceable(self.node)
         and not Render.in_head(self.node)
 end
 

@@ -8,7 +8,7 @@ Render.__index = Render
 ---@protected
 ---@return boolean
 function Render:enabled()
-    return self:structure() and self:alone(self.node)
+    return self:structure() and self:replaceable(self.node)
 end
 
 ---@protected

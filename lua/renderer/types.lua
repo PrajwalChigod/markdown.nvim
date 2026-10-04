@@ -185,6 +185,7 @@
 ---@field quote? boolean
 ---@field pre? boolean
 ---@field rule? boolean
+---@field table? boolean
 ---@field entity? boolean
 ---@field comment? renderer.html.comment.UserConfig
 ---@field tag? table<string, renderer.html.Tag>

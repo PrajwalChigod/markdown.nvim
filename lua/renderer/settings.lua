@@ -981,6 +981,7 @@ M.html = {}
 ---@field quote boolean
 ---@field pre boolean
 ---@field rule boolean
+---@field table boolean
 ---@field entity boolean
 ---@field comment renderer.html.comment.Config
 ---@field tag table<string, renderer.html.Tag>
@@ -1020,6 +1021,10 @@ M.html.default = {
     pre = true,
     -- Replace hr with a line, uses `dash` config.
     rule = true,
+    -- Replace table elements with a bordered grid, uses `pipe_table` config.
+    -- Tables with colspan / rowspan or another table inside, and tables that do
+    -- not fit fully inside the visible range of the window are left as is.
+    table = true,
     -- Replace entities like &amp; and &#169; with the character they stand for.
     entity = true,
     comment = {
@@ -1106,6 +1111,7 @@ function M.html.schema()
         quote = { type = 'boolean' },
         pre = { type = 'boolean' },
         rule = { type = 'boolean' },
+        table = { type = 'boolean' },
         entity = { type = 'boolean' },
         comment = {
             record = {

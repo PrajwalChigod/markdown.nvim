@@ -114,6 +114,22 @@ describe('html file', function()
         util.assert_view(marks, { 'x' })
     end)
 
+    it('head, style and script stay source below conceallevel 2', function()
+        local lines = {
+            'x',
+            '<head><title>t</title></head>',
+            '<head>',
+            '  <title>My Page</title>',
+            '</head>',
+            '<style>',
+            'p {}',
+            '</style>',
+        }
+        local opts = { win_options = { conceallevel = { rendered = 1 } } }
+        setup(lines, opts)
+        util.assert_view(util.marks(), lines)
+    end)
+
     it('bullets for ul and li', function()
         setup({ '<ul>', '  <li>one</li>', '  <li>two</li>', '</ul>' })
         local marks = util.marks()
