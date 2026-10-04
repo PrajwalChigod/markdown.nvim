@@ -25,7 +25,7 @@ function M.run(context, parser)
         local language = language_tree:lang()
         if
             (state.custom_handlers[language] or M.builtin[language])
-            and (state.nested or M.level(language_tree) == 1)
+            and (state.nested or M.level(language_tree) <= 1)
             and context.view:overlaps(root)
         then
             local roots = language_roots[language]

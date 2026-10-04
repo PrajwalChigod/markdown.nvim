@@ -43,12 +43,13 @@ end
 
 ---@param lines string[]
 ---@param opts? renderer.UserConfig
-function M.setup.text(lines, opts)
+---@param filetype? string
+function M.setup.text(lines, opts, filetype)
     M.setup.init(opts)
     local buf = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_set_current_buf(buf)
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
-    vim.bo[buf].filetype = 'markdown'
+    vim.bo[buf].filetype = filetype or 'markdown'
     vim.wait(0)
 end
 
