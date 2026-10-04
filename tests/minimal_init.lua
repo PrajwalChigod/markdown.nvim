@@ -37,7 +37,7 @@ require('nvim-treesitter')
 
 vim.api.nvim_create_autocmd('FileType', {
     group = vim.api.nvim_create_augroup('Highlighter', {}),
-    pattern = 'markdown',
+    pattern = { 'markdown', 'html' },
     callback = function(args)
         vim.treesitter.start(args.buf)
     end,

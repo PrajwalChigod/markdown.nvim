@@ -2,6 +2,10 @@
 
 ## Pre-release
 
+### Bug Fixes
+
+- buffers whose root language is not markdown now render when `nested = false`
+
 ## 0.1.0 (2026-10-03)
 
 First release of this fork, based on
