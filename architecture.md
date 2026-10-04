@@ -219,6 +219,34 @@ stand in for them, used by wrapped table rows. Neovim does not draw virtual
 lines attached to a hidden row, so `lib/replacements.lua` moves them above the
 next visible row.
 
+`core/cursor.lua` keeps the cursor off lines Neovim hides with `conceal_lines`.
+Neovim does not skip them itself: `j` moves one buffer line at a time, so the
+cursor walks through a hidden head or list tag with nothing changing on
+screen. `cursor.skip` asks `nvim_win_text_height` whether the cursor row has
+height 0, which already accounts for `concealcursor` and so is false whenever
+anti-conceal reveals the row, then moves to the nearest visible row in the
+direction of travel, keeping the wanted column. It is called from two places:
+
+- the `CursorMoved` autocmd in `core/manager.lua`, before the update is
+  scheduled. Neovim draws the screen between the autocmd and a scheduled
+  callback, so moving the cursor any later shows it on the hidden line for one
+  frame;
+- the end of `Updater:display`, for marks that are drawn under a cursor that
+  did not move: the first render, and a jump into rows that had not been
+  parsed.
+
+A count is left as Neovim applies it, in buffer lines, because that is what
+the number column shows: with `relativenumber` the line labelled 5 is reached
+with `5j` whether or not hidden lines lie between. Only the landing line is
+corrected. It runs in normal and visual modes and can be turned off with
+`anti_conceal.skip_hidden`.
+
+Rows hidden by a replace mark are skipped like any other, so an HTML table or
+a wrapped table row stays drawn and the cursor steps over it. `Updater:hide`
+has an older answer to the same problem, it hides a replace mark whose first
+row holds the cursor so that the source shows. With skipping on the cursor
+never rests there, so that rule only acts when skipping is off.
+
 ## Handlers and renderers
 
 `core/handlers.lua` walks every language tree in the buffer, including
@@ -285,6 +313,12 @@ and offers `alone` and `hide`: a tag alone on its lines is hidden with
 lines with virtual lines (`head`, `raw`, `table`) also check `replaceable`,
 which needs `conceallevel` 2 or more because Neovim does not hide lines below
 that.
+
+A virtual line cannot hold the cursor, so `head.lua` avoids one where it can:
+when the `title` has a line of its own, that line stays, with its tags
+concealed, and only the lines around it are hidden. The title is then a real
+line the cursor can rest on and the first line of the page. A title that
+shares its line with other tags is still shown as a virtual line.
 
 | Renderer in `render/html/` | Applies to                              | Group     | Switch                     |
 | -------------------------- | --------------------------------------- | --------- | -------------------------- |

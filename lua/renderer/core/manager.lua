@@ -1,3 +1,4 @@
+local cursor = require('renderer.core.cursor')
 local env = require('renderer.lib.env')
 local log = require('renderer.core.log')
 local state = require('renderer.state')
@@ -36,6 +37,12 @@ function M.init()
                     ui.update(buf, win, args.event, true)
                 end
             end
+        end,
+    })
+    vim.api.nvim_create_autocmd('WinClosed', {
+        group = M.group,
+        callback = function(args)
+            cursor.forget(tonumber(args.match) --[[@as integer]])
         end,
     })
 end
@@ -120,12 +127,26 @@ function M.attach(buf)
             end
             local win = env.buf.win(buf)
             local event = args.event
+            -- done here rather than after the update, which is scheduled, so
+            -- that the cursor is never drawn on a hidden line
+            if event == 'CursorMoved' then
+                M.skip_hidden(buf, win)
+            end
             ui.update(buf, win, event, vim.tbl_contains(force, event))
         end,
     })
 
     if config.enabled then
         ui.update(buf, env.buf.win(buf), 'Initial', true)
+    end
+end
+
+---@private
+---@param buf integer
+---@param win integer
+function M.skip_hidden(buf, win)
+    if state.get(buf).anti_conceal.skip_hidden then
+        cursor.skip(buf, win, env.mode.get())
     end
 end
 

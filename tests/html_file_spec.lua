@@ -61,15 +61,41 @@ describe('html file', function()
         })
         local marks = util.marks()
         hide(marks, { 0, 0 }, { 0, 6 })
-        hide(marks, { 1, 4 }, { 0, 7 })
-        marks:add(5, 0, {
-            virt_lines = { { { 'My Page', 'RmHtmlBold' } } },
-            virt_lines_above = true,
+        hide(marks, { 1, 1 }, { 0, 6 })
+        marks:add({ 2, 2 }, { 2, 9 }, util.conceal())
+        marks:add({ 2, 2 }, { 9, 16 }, {
+            hl_eol = false,
+            hl_group = 'RmHtmlBold',
         })
+        marks:add({ 2, 2 }, { 16, 24 }, util.conceal())
+        hide(marks, { 3, 4 }, { 0, 7 })
         marks:add({ 5, 5 }, { 0, 6 }, util.conceal())
         marks:add({ 5, 5 }, { 7, 14 }, util.conceal())
         hide(marks, { 6, 6 }, { 0, 7 })
-        util.assert_view(marks, { 'My Page', 'x' })
+        util.assert_view(marks, { '  My Page', 'x' })
+    end)
+
+    it('title keeps its line so the cursor can reach it', function()
+        setup({ '<head>', '<meta>', '<title>T</title>', '</head>', 'x' })
+        util.assert_screen({ 'T', 'x' })
+        assert.same(3, vim.api.nvim_win_get_cursor(0)[1])
+        util.set_row(5)
+        vim.cmd.normal({ 'k', bang = true })
+        vim.api.nvim_exec_autocmds('CursorMoved', {})
+        vim.wait(0)
+        assert.same(3, vim.api.nvim_win_get_cursor(0)[1])
+        util.assert_screen({ 'T', 'x' })
+    end)
+
+    it('title sharing a line with the head is a virtual line', function()
+        setup({ 'a', '<head>', '<title>T</title><meta>', '</head>', 'x' })
+        local marks = util.marks()
+        hide(marks, { 1, 3 }, { 0, 7 })
+        marks:add(4, 0, {
+            virt_lines = { { { 'T', 'RmHtmlBold' } } },
+            virt_lines_above = true,
+        })
+        util.assert_view(marks, { 'a', 'T', 'x' })
     end)
 
     it('head without a title is hidden', function()

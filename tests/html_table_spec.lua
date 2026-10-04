@@ -374,7 +374,9 @@ describe('html table', function()
     end)
 
     it('shows the source under the cursor', function()
-        setup(page({ '<table>', '  <tr><td>a</td></tr>', '</table>' }))
+        -- the cursor only reaches a replaced row when it does not skip them
+        local opts = { anti_conceal = { skip_hidden = false } }
+        setup(page({ '<table>', '  <tr><td>a</td></tr>', '</table>' }), opts)
         util.set_row(2)
         util.assert_screen({
             'x',

@@ -9,6 +9,7 @@ M.anti_conceal = {}
 ---@field disabled_modes renderer.Modes
 ---@field above integer
 ---@field below integer
+---@field skip_hidden boolean
 ---@field ignore renderer.conceal.Ignore
 
 ---@alias renderer.conceal.Ignore table<renderer.Element, renderer.Modes>
@@ -45,6 +46,12 @@ M.anti_conceal.default = {
     above = 0,
     -- Number of lines below cursor to show.
     below = 0,
+    -- Move the cursor past lines that are hidden completely, so that it always lands on a line
+    -- that can be seen. This includes lines drawn as something else, such as an HTML table or a
+    -- wrapped table row, which otherwise show their source under the cursor. Only has an effect
+    -- where a hidden line stays hidden under the cursor, which is the case when `enabled` is
+    -- false. Counts are unchanged, `5j` moves 5 buffer lines.
+    skip_hidden = true,
     -- Which elements to always show, ignoring anti conceal behavior. Values can either be
     -- booleans to fix the behavior or string lists representing modes where anti conceal
     -- behavior will be ignored. Valid values are:
@@ -82,6 +89,7 @@ function M.anti_conceal.schema()
             disabled_modes = modes,
             above = { type = 'number' },
             below = { type = 'number' },
+            skip_hidden = { type = 'boolean' },
             ignore = { map = { { enum = M.anti_conceal.element }, modes } },
         },
     }

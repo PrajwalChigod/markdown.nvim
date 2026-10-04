@@ -48,6 +48,7 @@
 ---@field disabled_modes? renderer.Modes
 ---@field above? integer
 ---@field below? integer
+---@field skip_hidden? boolean
 ---@field ignore? renderer.conceal.Ignore
 
 ---@class (exact) renderer.base.UserConfig

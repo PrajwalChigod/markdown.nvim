@@ -12,6 +12,12 @@
 
 ### Bug Fixes
 
+- the cursor no longer stalls on lines that are hidden completely, such as the
+  head of an HTML file, when anti conceal is off: it moves on to the next visible
+  line. This also steps over HTML tables and wrapped table rows instead of
+  showing their source, switch with `anti_conceal.skip_hidden`
+- the title of an HTML page keeps its own line when it has one, so the cursor can
+  reach the first line of the page
 - HTML `<head>` titles and `<style>` / `<script>` summaries no longer show next
   to their source when `conceallevel` is below 2
 
