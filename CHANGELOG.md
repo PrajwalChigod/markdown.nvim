@@ -2,6 +2,10 @@
 
 ## Pre-release
 
+### Internal
+
+- file formats are now described in one place, with no change in behaviour
+
 ## 0.1.1 (2026-10-04)
 
 ### Bug Fixes
