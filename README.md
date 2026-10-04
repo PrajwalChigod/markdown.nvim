@@ -254,10 +254,10 @@ require('renderer').setup({
         -- Number of lines below cursor to show.
         below = 0,
         -- Move the cursor past lines that are hidden completely, so that it always lands on a line
-        -- that can be seen. This includes lines drawn as something else, such as an HTML table or a
-        -- wrapped table row, which otherwise show their source under the cursor. Only has an effect
-        -- where a hidden line stays hidden under the cursor, which is the case when `enabled` is
-        -- false. Counts are unchanged, `5j` moves 5 buffer lines.
+        -- that can be seen. This includes lines drawn as something else, such as a wrapped table
+        -- row, which otherwise show their source under the cursor. Only has an effect where a hidden
+        -- line stays hidden under the cursor, which is the case when `enabled` is false. Counts are
+        -- unchanged, `5j` moves 5 buffer lines.
         skip_hidden = true,
         -- Which elements to always show, ignoring anti conceal behavior. Values can either be
         -- booleans to fix the behavior or string lists representing modes where anti conceal

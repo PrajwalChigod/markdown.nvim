@@ -9,6 +9,7 @@ local str = require('renderer.lib.str')
 ---@field alignment renderer.table.col.Alignment
 
 ---@class renderer.html.table.Row
+---@field node renderer.Node
 ---@field head boolean
 ---@field cells renderer.html.table.Cell[]
 
@@ -17,9 +18,11 @@ local str = require('renderer.lib.str')
 ---@field rows renderer.html.table.Row[]
 ---@field cols integer
 
----Replaces a `table` with virtual lines drawn from the `pipe_table` config.
----The source lines are hidden, so cells can span lines and nest other tags.
----Tables that cannot be drawn, like those with spans, are left as source.
+---Draws a `table` as a grid from the `pipe_table` config. The source lines are
+---hidden, so cells can span lines and nest other tags. Each row is drawn over
+---the first line of its `tr` when it can be, so the cursor can rest on it, and
+---the whole table is replaced with virtual lines otherwise. Tables that cannot
+---be drawn, like those with spans, are left as source.
 ---@class renderer.render.html.Table: renderer.render.html.Element
 ---@field private pipe renderer.table.Config
 ---@field private data renderer.html.table.Data
@@ -113,7 +116,7 @@ function Render:row(node, head)
     if not valid or #cells == 0 then
         return nil
     end
-    return { head = head or headings, cells = cells }
+    return { node = node, head = head or headings, cells = cells }
 end
 
 ---@private
@@ -231,27 +234,135 @@ function Render:run()
         head = head + 1
     end
 
-    local lines = {} ---@type renderer.mark.Line[]
+    -- lines drawn above the first row
+    local above = {} ---@type renderer.mark.Line[]
     if self.data.caption then
         local width = env.win.width(self.context.win) - prefix
         for _, line in ipairs(Parser.wrap(self.data.caption, width)) do
-            lines[#lines + 1] = self:line():pad(prefix):extend(line):get()
+            above[#above + 1] = self:line():pad(prefix):extend(line):get()
         end
     end
     if self.pipe.border_enabled then
         local highlight = head > 0 and self.pipe.head or self.pipe.row
-        lines[#lines + 1] = self:border(widths, prefix, 1, highlight)
+        above[#above + 1] = self:border(widths, prefix, 1, highlight)
     end
+
+    -- lines of each row, followed by the border drawn below it
+    local groups = {} ---@type renderer.mark.Line[][]
     for i, row in ipairs(rows) do
-        vim.list_extend(lines, self:row_lines(row, widths, prefix))
+        local lines = self:row_lines(row, widths, prefix)
         if i == head and i < #rows then
             lines[#lines + 1] = self:border(widths, prefix, 4, self.pipe.head)
         end
+        groups[i] = lines
     end
     if self.pipe.border_enabled then
-        lines[#lines + 1] = self:border(widths, prefix, 7, self.pipe.row)
+        local last = groups[#groups]
+        last[#last + 1] = self:border(widths, prefix, 7, self.pipe.row)
     end
-    self.marks:replace(self.config, self.node, lines)
+
+    local kept = self:kept()
+    if kept then
+        self:keep(kept, above, groups)
+    else
+        local lines = above
+        for _, group in ipairs(groups) do
+            vim.list_extend(lines, group)
+        end
+        self.marks:replace(self.config, self.node, lines)
+    end
+end
+
+---The line each row is drawn over, the first line of its `tr`. A virtual line
+---cannot hold the cursor, a line of the buffer can. Needs every row to start on
+---a line of its own between the tags of the table, and that line to fit the
+---window, as a line that wraps takes more than one line on screen even when its
+---text is concealed.
+---@private
+---@return integer[]?
+function Render:kept()
+    local wrap = env.win.get(self.context.win, 'wrap')
+    local width = env.win.width(self.context.win)
+    local result = {} ---@type integer[]
+    local last = self.node.start_row
+    for _, row in ipairs(self.data.rows) do
+        local start = row.node.start_row
+        if start <= last then
+            return nil
+        end
+        if wrap and str.width(self:text(start)) > width then
+            return nil
+        end
+        result[#result + 1] = start
+        last = row.node.end_row
+    end
+    local end_tag = assert(self.end_tag, 'missing end tag')
+    return last < end_tag.start_row and result or nil
+end
+
+---Draw the table over the lines in `kept` and hide every other line
+---@private
+---@param kept integer[]
+---@param above renderer.mark.Line[]
+---@param groups renderer.mark.Line[][]
+function Render:keep(kept, above, groups)
+    local end_tag = assert(self.end_tag, 'missing end tag')
+    local start = self.node.start_row
+    for i, row in ipairs(kept) do
+        self:rows(start, row - 1)
+        start = row + 1
+
+        -- lines that come before this row sit above it, a line of the buffer
+        -- is always there to hold them
+        local before = i == 1 and above or vim.list_slice(groups[i - 1], 2)
+        if #before > 0 then
+            self.marks:add(self.config, 'virtual_lines', row, 0, {
+                virt_lines = before,
+                virt_lines_above = true,
+            })
+        end
+        self.marks:add(self.config, true, row, 0, {
+            end_row = row,
+            end_col = #self:text(row),
+            conceal = '',
+        })
+        self.marks:add(self.config, true, row, 0, {
+            virt_text = groups[i][1],
+            virt_text_pos = 'overlay',
+        })
+    end
+    self:rows(start, end_tag.start_row - 1)
+
+    -- what follows the last row goes above the first visible line after the table
+    local below = vim.list_slice(groups[#groups], 2)
+    if #below > 0 then
+        self.marks:replace(self.config, end_tag, below)
+    else
+        self.marks:over(self.config, true, end_tag, { conceal_lines = '' })
+    end
+end
+
+---@private
+---@param row integer
+---@return string
+function Render:text(row)
+    local buf = self.context.buf
+    return vim.api.nvim_buf_get_lines(buf, row, row + 1, false)[1] or ''
+end
+
+---Hide a range of lines
+---@private
+---@param first integer
+---@param last integer
+function Render:rows(first, last)
+    if first > last then
+        return
+    end
+    self.marks:add(self.config, true, first, 0, {
+        end_row = last,
+        end_col = #self:text(last),
+        conceal_lines = '',
+    })
 end
 
 ---Width of each column, shrunk to fit the window when wrapping is on

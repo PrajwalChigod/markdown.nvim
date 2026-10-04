@@ -154,8 +154,9 @@ describe('cursor', function()
     end)
 
     it('steps over a table drawn as virtual lines', function()
-        local body = '<tr><td>x</td></tr>'
-        setup({ 'a', '<table>', body, '</table>', 'b' })
+        -- rows sharing a line leave no line for the cursor to rest on
+        local row = '<tr><td>x</td></tr>'
+        setup({ 'a', '<table>', row .. row, '</table>', 'b' })
         util.set_row(1)
         press('j')
         assert_cursor(5)
@@ -198,6 +199,9 @@ describe('cursor', function()
         local tops = {} ---@type integer[]
         for _ = 1, 30 do
             press('\5')
+            -- as Neovim does after every key, what it knows about the window
+            -- is otherwise left over from an earlier spec
+            vim.cmd.redraw()
             tops[#tops + 1] = vim.fn.line('w0')
         end
         local row = vim.api.nvim_win_get_cursor(0)[1]
@@ -222,6 +226,7 @@ describe('cursor', function()
         util.set_row(20)
         for _ = 1, 30 do
             press('\5')
+            vim.cmd.redraw()
         end
         press('k')
         local row = vim.api.nvim_win_get_cursor(0)[1]
