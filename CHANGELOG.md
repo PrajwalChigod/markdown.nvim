@@ -2,30 +2,29 @@
 
 ## Pre-release
 
+## 0.2.0 (2026-10-04)
+
 ### Features
 
 - render plain HTML files when `html` is added to `file_types`: page structure is
   hidden, and lists, quotes, `<pre>`, rules, headings and entities render like
-  their markdown counterparts, each switchable under `html`
+  their markdown counterparts, each switchable under `html`. A page title keeps
+  its own line so the cursor can reach the first line of the page
 - render HTML `<table>` as a bordered grid using the `pipe_table` config, with
-  cell text wrapped to fit the window, switch with `html.table`
+  cell text wrapped to fit the window, switch with `html.table`. Rows are drawn
+  over the first line of each `<tr>` so the cursor moves through a table row by
+  row. A table whose rows share a line, or have a first line wider than the
+  window, is drawn as virtual lines instead
+- the cursor moves past lines that are hidden completely, such as the head of an
+  HTML file, when anti conceal is off, instead of stalling on them. Scrolling is
+  not held back: when it carries the cursor onto hidden lines at the end of a
+  buffer it stays there, so the window still reaches the end. Switch with
+  `anti_conceal.skip_hidden`
 
 ### Bug Fixes
 
-- the cursor no longer stalls on lines that are hidden completely, such as the
-  head of an HTML file, when anti conceal is off: it moves on to the next visible
-  line. This also steps over wrapped table rows instead of showing their source,
-  switch with `anti_conceal.skip_hidden`. Scrolling is not held back by it: when
-  scrolling carries the cursor onto hidden lines at the end of a buffer it stays
-  there, so the window still reaches the end
-- the title of an HTML page keeps its own line when it has one, so the cursor can
-  reach the first line of the page
-- the rows of an HTML table are drawn over the first line of each `<tr>`, so the
-  cursor moves through a table row by row instead of stepping over it. A table
-  whose rows share a line, or have a first line wider than the window, is still
-  drawn as virtual lines
-- HTML `<head>` titles and `<style>` / `<script>` summaries no longer show next
-  to their source when `conceallevel` is below 2
+- the cursor no longer shows the source of a wrapped markdown table row: it
+  steps over the row like any other hidden line when anti conceal is off
 
 ## 0.1.2 (2026-10-04)
 
