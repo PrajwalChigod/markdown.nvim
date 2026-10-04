@@ -253,6 +253,12 @@ require('renderer').setup({
         above = 0,
         -- Number of lines below cursor to show.
         below = 0,
+        -- Move the cursor past lines that are hidden completely, so that it always lands on a line
+        -- that can be seen. This includes lines drawn as something else, such as a wrapped table
+        -- row, which otherwise show their source under the cursor. Only has an effect where a hidden
+        -- line stays hidden under the cursor, which is the case when `enabled` is false. Counts are
+        -- unchanged, `5j` moves 5 buffer lines.
+        skip_hidden = true,
         -- Which elements to always show, ignoring anti conceal behavior. Values can either be
         -- booleans to fix the behavior or string lists representing modes where anti conceal
         -- behavior will be ignored. Valid values are:
@@ -924,6 +930,23 @@ require('renderer').setup({
         enabled = true,
         -- Additional modes to render HTML.
         render_modes = false,
+        -- Hide the doctype, html, head and body tags and collapse style and script
+        -- elements into one line, only applies to a whole HTML file.
+        structure = true,
+        -- Replace ul, ol and li tags with bullets and numbers, uses `bullet` config.
+        list = true,
+        -- Replace blockquote tags with the quote icon, uses `quote` config.
+        quote = true,
+        -- Add a background to pre elements, uses `code` config.
+        pre = true,
+        -- Replace hr with a line, uses `dash` config.
+        rule = true,
+        -- Replace table elements with a bordered grid, uses `pipe_table` config.
+        -- Tables with colspan / rowspan or another table inside, and tables that do
+        -- not fit fully inside the visible range of the window are left as is.
+        table = true,
+        -- Replace entities like &amp; and &#169; with the character they stand for.
+        entity = true,
         comment = {
             -- Useful context to have when evaluating values.
             -- | text | text value of the comment node |
@@ -1884,6 +1907,37 @@ The table below shows all the highlight groups with their default link
 > and adding logic to the config method to disable `obsidian.nvim` as suggested
 > in [#116](https://github.com/MeanderingProgrammer/render-markdown.nvim/issues/116),
 > though things like this can break at any time given the reliance on internal logic.
+
+## HTML Files
+
+HTML files render too, they are opt in. Add `html` to `file_types`:
+
+```lua
+require('renderer').setup({
+    file_types = { 'markdown', 'html' },
+})
+```
+
+The buffer keeps the HTML source and stays editable, the source of the line
+under the cursor is shown as usual. On top of the inline tags that work inside
+markdown, an HTML file gets:
+
+- the doctype, `<html>`, `<head>` and `<body>` hidden, with only the `<title>`
+  text shown, and `<style>` and `<script>` collapsed to one line each
+- bullets and numbers for `<ul>`, `<ol>` and `<li>`, using the `bullet` config
+- quote icons for `<blockquote>`, using the `quote` config
+- a background for `<pre>`, using the `code` config
+- a line for `<hr>`, using the `dash` config
+- a bordered grid for `<table>`, using the `pipe_table` config
+- icons and backgrounds for `<h1>` to `<h6>`, using the `heading` config
+- the `link.hyperlink` icon for `<a href>`
+- entities like `&amp;` and `&#169;` shown as the character they stand for
+
+The page structure rules and the heading icons only apply to a whole HTML file.
+The rest also apply to HTML inside markdown, and can be turned off with the `html`
+options `structure`, `list`, `quote`, `pre`, `rule`, `table` and `entity`.
+
+See [Limitations](doc/limitations.md) for what is not rendered.
 
 ## Images
 

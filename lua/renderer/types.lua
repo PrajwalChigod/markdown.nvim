@@ -48,6 +48,7 @@
 ---@field disabled_modes? renderer.Modes
 ---@field above? integer
 ---@field below? integer
+---@field skip_hidden? boolean
 ---@field ignore? renderer.conceal.Ignore
 
 ---@class (exact) renderer.base.UserConfig
@@ -180,6 +181,13 @@
 ---@field custom? table<string, renderer.heading.Custom>
 
 ---@class (exact) renderer.html.UserConfig: renderer.base.UserConfig
+---@field structure? boolean
+---@field list? boolean
+---@field quote? boolean
+---@field pre? boolean
+---@field rule? boolean
+---@field table? boolean
+---@field entity? boolean
 ---@field comment? renderer.html.comment.UserConfig
 ---@field tag? table<string, renderer.html.Tag>
 

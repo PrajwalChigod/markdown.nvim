@@ -109,6 +109,7 @@ function Updater:run()
         end
     end
     if not render then
+        require('renderer.core.cursor').forget(self.win)
         self:clear()
     else
         self:render()
@@ -174,6 +175,11 @@ function Updater:display()
     self.decorator:display(M.ns, function(extmark)
         return self:hide(extmark, range)
     end)
+    -- marks can be drawn under a cursor that did not move, i.e. on first
+    -- render or after a jump into rows that had not been parsed
+    if self.config.anti_conceal.skip_hidden then
+        require('renderer.core.cursor').skip(self.buf, self.win, self.mode)
+    end
     state.on.render({ buf = self.buf, win = self.win })
 end
 

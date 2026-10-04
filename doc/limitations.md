@@ -202,3 +202,36 @@ be reached this plugin cannot not do anything special in the operator pending st
 since it effectively does not exist.
 
 This is expected behavior by `which-key`: [ISSUE #534](https://github.com/folke/which-key.nvim/issues/534)
+
+## HTML Cannot Be Reflowed
+
+Marks decorate the text of the buffer, they cannot move it. Minified HTML, or a
+page with many elements on one line, is still hard to read. A reader view for
+this is planned.
+
+## Some HTML Tables Are Not Rendered
+
+A `<table>` is replaced by virtual lines, so it is drawn as a grid even when its
+cells span lines. These tables are left as source:
+
+- tables with `colspan` or `rowspan` cells, which do not fit a grid
+- tables with another table inside a cell, the inner table still renders
+- tables that share a line with other text
+- tables that do not fit fully inside the visible lines of the window
+  (including the margin around it), as the text of a cell comes from the marks
+  of the tags inside it
+- tables when `conceallevel` is below 2, as Neovim does not hide lines then
+
+Cells are plain text, so block content inside a cell is flattened to one line
+of wrapped text.
+
+## The Cursor Cannot Enter Some HTML Tables
+
+Each row of a table is drawn over the first line of its `<tr>`, so the cursor
+moves through a table row by row. When that is not possible the whole table is
+drawn as virtual lines, which cannot hold the cursor, and with anti conceal off
+the cursor steps over the table. This is the case when:
+
+- two rows share a line, or a row shares a line with `<table>` or `</table>`
+- the first line of a row is wider than the window and `wrap` is on, as a line
+  that wraps takes more than one line on screen even when its text is hidden

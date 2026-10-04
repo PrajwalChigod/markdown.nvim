@@ -9,6 +9,7 @@ M.anti_conceal = {}
 ---@field disabled_modes renderer.Modes
 ---@field above integer
 ---@field below integer
+---@field skip_hidden boolean
 ---@field ignore renderer.conceal.Ignore
 
 ---@alias renderer.conceal.Ignore table<renderer.Element, renderer.Modes>
@@ -45,6 +46,12 @@ M.anti_conceal.default = {
     above = 0,
     -- Number of lines below cursor to show.
     below = 0,
+    -- Move the cursor past lines that are hidden completely, so that it always lands on a line
+    -- that can be seen. This includes lines drawn as something else, such as a wrapped table
+    -- row, which otherwise show their source under the cursor. Only has an effect where a hidden
+    -- line stays hidden under the cursor, which is the case when `enabled` is false. Counts are
+    -- unchanged, `5j` moves 5 buffer lines.
+    skip_hidden = true,
     -- Which elements to always show, ignoring anti conceal behavior. Values can either be
     -- booleans to fix the behavior or string lists representing modes where anti conceal
     -- behavior will be ignored. Valid values are:
@@ -82,6 +89,7 @@ function M.anti_conceal.schema()
             disabled_modes = modes,
             above = { type = 'number' },
             below = { type = 'number' },
+            skip_hidden = { type = 'boolean' },
             ignore = { map = { { enum = M.anti_conceal.element }, modes } },
         },
     }
@@ -976,6 +984,13 @@ end
 M.html = {}
 
 ---@class (exact) renderer.html.Config: renderer.base.Config
+---@field structure boolean
+---@field list boolean
+---@field quote boolean
+---@field pre boolean
+---@field rule boolean
+---@field table boolean
+---@field entity boolean
 ---@field comment renderer.html.comment.Config
 ---@field tag table<string, renderer.html.Tag>
 
@@ -1003,6 +1018,23 @@ M.html.default = {
     enabled = true,
     -- Additional modes to render HTML.
     render_modes = false,
+    -- Hide the doctype, html, head and body tags and collapse style and script
+    -- elements into one line, only applies to a whole HTML file.
+    structure = true,
+    -- Replace ul, ol and li tags with bullets and numbers, uses `bullet` config.
+    list = true,
+    -- Replace blockquote tags with the quote icon, uses `quote` config.
+    quote = true,
+    -- Add a background to pre elements, uses `code` config.
+    pre = true,
+    -- Replace hr with a line, uses `dash` config.
+    rule = true,
+    -- Replace table elements with a bordered grid, uses `pipe_table` config.
+    -- Tables with colspan / rowspan or another table inside, and tables that do
+    -- not fit fully inside the visible range of the window are left as is.
+    table = true,
+    -- Replace entities like &amp; and &#169; with the character they stand for.
+    entity = true,
     comment = {
         -- Useful context to have when evaluating values.
         -- | text | text value of the comment node |
@@ -1082,6 +1114,13 @@ function M.html.schema()
         },
     }
     return M.base.schema({
+        structure = { type = 'boolean' },
+        list = { type = 'boolean' },
+        quote = { type = 'boolean' },
+        pre = { type = 'boolean' },
+        rule = { type = 'boolean' },
+        table = { type = 'boolean' },
+        entity = { type = 'boolean' },
         comment = {
             record = {
                 conceal = { type = 'boolean' },
