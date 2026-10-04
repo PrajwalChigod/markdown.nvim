@@ -4,6 +4,7 @@ local str = require('renderer.lib.str')
 ---@field buf integer
 ---@field win integer
 ---@field config renderer.buf.Config
+---@field format? renderer.Format
 ---@field view renderer.request.View
 ---@field callout renderer.request.Callout
 ---@field checkbox renderer.request.Checkbox
@@ -25,6 +26,7 @@ function Context.new(buf, win, config, view)
     self.buf = buf
     self.win = win
     self.config = config
+    self.format = require('renderer.format').get(buf)
     self.view = view
     self.callout = require('renderer.request.callout').new()
     self.checkbox = require('renderer.request.checkbox').new()

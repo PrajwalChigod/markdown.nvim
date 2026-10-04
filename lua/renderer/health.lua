@@ -13,7 +13,7 @@ local state = require('renderer.state')
 local M = {}
 
 ---@private
-M.version = '0.1.1'
+M.version = '0.1.2'
 
 function M.check()
     M.start('versions')
@@ -32,21 +32,9 @@ function M.check()
     end
 
     local config = state.get(0)
-    local html = config.html
     local latex = config.latex
-    local yaml = config.yaml
 
-    M.ts_info('markdown', true, true)
-    M.ts_info('markdown_inline', true, false)
-    if html.enabled then
-        M.ts_info('html', false, false)
-    end
-    if latex.enabled then
-        M.ts_info('latex', false, false)
-    end
-    if yaml.enabled then
-        M.ts_info('yaml', false, false)
-    end
+    M.ts_infos(config)
 
     M.start('icons')
     local provider = icons.name()
@@ -124,6 +112,49 @@ function M.neovim(min)
     else
         vim.health.ok('neovim >= ' .. min)
     end
+end
+
+---@private
+---@param config renderer.buf.Config
+function M.ts_infos(config)
+    local required, optional, active = M.languages()
+    for _, language in ipairs(required) do
+        M.ts_info(language, true, active[language] == true)
+    end
+    for _, language in ipairs(optional) do
+        local section = config[language] ---@type { enabled: boolean }?
+        if section and section.enabled then
+            M.ts_info(language, false, false)
+        end
+    end
+end
+
+---@private
+---@return string[] required
+---@return string[] optional
+---@return table<string, boolean> active
+function M.languages()
+    local registry = require('renderer.format')
+    local languages = {} ---@type table<string, boolean>
+    local active = {} ---@type table<string, boolean>
+    for _, file_type in ipairs(state.file_types) do
+        local lang = vim.treesitter.language.get_lang(file_type)
+        local format = registry.root(lang)
+        if format then
+            active[format.root] = true
+            for language, required in pairs(format.languages) do
+                -- required by one format wins over optional in another
+                languages[language] = languages[language] or required
+            end
+        end
+    end
+    local required, optional = {}, {} ---@type string[], string[]
+    for language, value in pairs(languages) do
+        table.insert(value and required or optional, language)
+    end
+    table.sort(required)
+    table.sort(optional)
+    return required, optional, active
 end
 
 ---@private

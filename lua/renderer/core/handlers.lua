@@ -6,14 +6,21 @@ local state = require('renderer.state')
 local M = {}
 
 ---@private
----@type table<string, renderer.Handler>
-M.builtin = {
-    html = require('renderer.handler.html'),
-    latex = require('renderer.handler.latex'),
-    markdown = require('renderer.handler.markdown'),
-    markdown_inline = require('renderer.handler.markdown_inline'),
-    yaml = require('renderer.handler.yaml'),
-}
+---@type table<string, renderer.Handler|false>
+M.cache = {}
+
+---@private
+---@param language string
+---@return renderer.Handler?
+function M.builtin(language)
+    local result = M.cache[language]
+    if result == nil then
+        local module = require('renderer.format').handler(language)
+        result = module and require(module) or false
+        M.cache[language] = result
+    end
+    return result or nil
+end
 
 ---@param context renderer.request.Context
 ---@param parser vim.treesitter.LanguageTree
@@ -24,7 +31,7 @@ function M.run(context, parser)
         local root = tree:root()
         local language = language_tree:lang()
         if
-            (state.custom_handlers[language] or M.builtin[language])
+            (state.custom_handlers[language] or M.builtin(language))
             and (state.nested or M.level(language_tree) <= 1)
             and context.view:overlaps(root)
         then
@@ -88,7 +95,7 @@ function M.tree(marks, language, ctx)
             return
         end
     end
-    local builtin = M.builtin[language]
+    local builtin = M.builtin(language)
     if builtin then
         log.buf('trace', 'Handler', ctx.buf, 'builtin')
         vim.list_extend(marks, builtin.parse(ctx))
