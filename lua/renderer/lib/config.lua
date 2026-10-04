@@ -8,6 +8,32 @@ local iter = require('renderer.lib.iter')
 local Config = {}
 Config.__index = Config
 
+---@private
+---@type string[]
+Config.components = {
+    'anti_conceal',
+    'bullet',
+    'callout',
+    'checkbox',
+    'code',
+    'dash',
+    'document',
+    'heading',
+    'html',
+    'indent',
+    'inline_highlight',
+    'latex',
+    'link',
+    'padding',
+    'paragraph',
+    'pipe_table',
+    'quote',
+    'render',
+    'sign',
+    'win_options',
+    'yaml',
+}
+
 ---@param root renderer.Config
 ---@param enabled boolean
 ---@param buf integer
@@ -19,28 +45,10 @@ function Config.new(root, enabled, buf, custom)
         enabled = enabled,
         render_modes = root.render_modes,
         debounce = root.debounce,
-        anti_conceal = root.anti_conceal,
-        bullet = root.bullet,
-        callout = root.callout,
-        checkbox = root.checkbox,
-        code = root.code,
-        dash = root.dash,
-        document = root.document,
-        heading = root.heading,
-        html = root.html,
-        indent = root.indent,
-        inline_highlight = root.inline_highlight,
-        latex = root.latex,
-        link = root.link,
-        padding = root.padding,
-        paragraph = root.paragraph,
-        pipe_table = root.pipe_table,
-        quote = root.quote,
-        render = root.render,
-        sign = root.sign,
-        win_options = root.win_options,
-        yaml = root.yaml,
     }
+    for _, name in ipairs(Config.components) do
+        config[name] = root[name]
+    end
     config = vim.deepcopy(config)
 
     ---@param override? renderer.partial.UserConfig
@@ -49,6 +57,8 @@ function Config.new(root, enabled, buf, custom)
     end
 
     local src = require('renderer.core.preview').get(buf)
+    local format = require('renderer.format').get(src or buf)
+    extend(format and format.defaults)
     extend(root.overrides.buflisted[env.buf.get(src or buf, 'buflisted')])
     extend(root.overrides.buftype[env.buf.get(src or buf, 'buftype')])
     extend(root.overrides.filetype[env.buf.get(src or buf, 'filetype')])
@@ -100,30 +110,10 @@ end
 function Config.schema(child)
     local settings = require('renderer.settings')
     ---@type renderer.schema.Record
-    local parent = {
-        debounce = { type = 'number' },
-        anti_conceal = settings.anti_conceal.schema(),
-        bullet = settings.bullet.schema(),
-        callout = settings.callout.schema(),
-        checkbox = settings.checkbox.schema(),
-        code = settings.code.schema(),
-        dash = settings.dash.schema(),
-        document = settings.document.schema(),
-        heading = settings.heading.schema(),
-        html = settings.html.schema(),
-        indent = settings.indent.schema(),
-        inline_highlight = settings.inline_highlight.schema(),
-        latex = settings.latex.schema(),
-        link = settings.link.schema(),
-        padding = settings.padding.schema(),
-        paragraph = settings.paragraph.schema(),
-        pipe_table = settings.pipe_table.schema(),
-        quote = settings.quote.schema(),
-        render = settings.render.schema(),
-        sign = settings.sign.schema(),
-        win_options = settings.win_options.schema(),
-        yaml = settings.yaml.schema(),
-    }
+    local parent = { debounce = { type = 'number' } }
+    for _, name in ipairs(Config.components) do
+        parent[name] = settings[name].schema()
+    end
     local record = vim.tbl_deep_extend('error', parent, child)
     return settings.base.schema(record)
 end
