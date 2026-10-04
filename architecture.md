@@ -241,6 +241,16 @@ with `5j` whether or not hidden lines lie between. Only the landing line is
 corrected. It runs in normal and visual modes and can be turned off with
 `anti_conceal.skip_hidden`.
 
+When nothing visible lies ahead, at either end of the buffer, the cursor goes
+back to the last visible row. One case is left alone: scrolling can carry the
+cursor onto hidden rows at the end of the buffer, because Neovim keeps it
+`scrolloff` lines below the top of the window. The last visible row is then
+closer to the top than that, and putting the cursor back on it makes Neovim
+undo the scroll, so the window would bounce instead of reaching the end.
+`cursor.fits` measures the screen lines above the row and the cursor only goes
+back when there are enough, otherwise it stays on the hidden row, where Neovim
+put it.
+
 Rows hidden by a replace mark are skipped like any other, so an HTML table or
 a wrapped table row stays drawn and the cursor steps over it. `Updater:hide`
 has an older answer to the same problem, it hides a replace mark whose first
