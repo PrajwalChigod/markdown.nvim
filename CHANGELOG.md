@@ -2,6 +2,8 @@
 
 ## Pre-release
 
+## 0.1.2 (2026-10-04)
+
 ### Internal
 
 - file formats are now described in one place, with no change in behaviour

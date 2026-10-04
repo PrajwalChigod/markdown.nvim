@@ -13,7 +13,7 @@ local state = require('renderer.state')
 local M = {}
 
 ---@private
-M.version = '0.1.1'
+M.version = '0.1.2'
 
 function M.check()
     M.start('versions')
@@ -117,25 +117,7 @@ end
 ---@private
 ---@param config renderer.buf.Config
 function M.ts_infos(config)
-    local registry = require('renderer.format')
-    local seen = {} ---@type table<string, boolean>
-    local required, optional = {}, {} ---@type string[], string[]
-    local active = {} ---@type table<string, boolean>
-    for _, file_type in ipairs(state.file_types) do
-        local lang = vim.treesitter.language.get_lang(file_type)
-        local format = registry.root(lang)
-        if format then
-            active[format.root] = true
-            for language, req in pairs(format.languages) do
-                if not seen[language] then
-                    seen[language] = true
-                    table.insert(req and required or optional, language)
-                end
-            end
-        end
-    end
-    table.sort(required)
-    table.sort(optional)
+    local required, optional, active = M.languages()
     for _, language in ipairs(required) do
         M.ts_info(language, true, active[language] == true)
     end
@@ -145,6 +127,34 @@ function M.ts_infos(config)
             M.ts_info(language, false, false)
         end
     end
+end
+
+---@private
+---@return string[] required
+---@return string[] optional
+---@return table<string, boolean> active
+function M.languages()
+    local registry = require('renderer.format')
+    local languages = {} ---@type table<string, boolean>
+    local active = {} ---@type table<string, boolean>
+    for _, file_type in ipairs(state.file_types) do
+        local lang = vim.treesitter.language.get_lang(file_type)
+        local format = registry.root(lang)
+        if format then
+            active[format.root] = true
+            for language, required in pairs(format.languages) do
+                -- required by one format wins over optional in another
+                languages[language] = languages[language] or required
+            end
+        end
+    end
+    local required, optional = {}, {} ---@type string[], string[]
+    for language, value in pairs(languages) do
+        table.insert(value and required or optional, language)
+    end
+    table.sort(required)
+    table.sort(optional)
+    return required, optional, active
 end
 
 ---@private

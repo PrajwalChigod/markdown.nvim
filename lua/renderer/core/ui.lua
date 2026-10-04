@@ -96,9 +96,10 @@ function Updater:run()
     end
     self.mode = env.mode.get() -- mode is only available after this point
     local format = require('renderer.format').get(self.buf)
+    local scroll = format ~= nil and format.scroll == true
     local render = self.config.enabled
         and self.config.resolved:render(self.mode)
-        and (env.win.view(self.win).leftcol == 0 or (format and format.scroll))
+        and (env.win.view(self.win).leftcol == 0 or scroll)
         and (self.config.render.diff or not env.win.get(self.win, 'diff'))
     log.buf('info', 'Render', self.buf, render)
     local next_state = render and 'rendered' or 'default'
