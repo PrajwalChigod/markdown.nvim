@@ -62,7 +62,7 @@ local function draw(marks, rows, kept, after, groups)
             virt_text_pos = 'overlay',
         })
     end
-    local last = assert(rows[2])
+    local last = assert(rows[2], 'missing second row')
     hide(start, last - 1)
     hide(last, last)
     local below = vim.list_slice(groups[#groups], 2)
