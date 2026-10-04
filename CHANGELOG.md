@@ -2,6 +2,8 @@
 
 ## Pre-release
 
+## 0.1.1 (2026-10-04)
+
 ### Bug Fixes
 
 - buffers whose root language is not markdown now render when `nested = false`
