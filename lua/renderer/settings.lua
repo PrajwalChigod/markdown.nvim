@@ -976,6 +976,12 @@ end
 M.html = {}
 
 ---@class (exact) renderer.html.Config: renderer.base.Config
+---@field structure boolean
+---@field list boolean
+---@field quote boolean
+---@field pre boolean
+---@field rule boolean
+---@field entity boolean
 ---@field comment renderer.html.comment.Config
 ---@field tag table<string, renderer.html.Tag>
 
@@ -1003,6 +1009,19 @@ M.html.default = {
     enabled = true,
     -- Additional modes to render HTML.
     render_modes = false,
+    -- Hide the doctype, html, head and body tags and collapse style and script
+    -- elements into one line, only applies to a whole HTML file.
+    structure = true,
+    -- Replace ul, ol and li tags with bullets and numbers, uses `bullet` config.
+    list = true,
+    -- Replace blockquote tags with the quote icon, uses `quote` config.
+    quote = true,
+    -- Add a background to pre elements, uses `code` config.
+    pre = true,
+    -- Replace hr with a line, uses `dash` config.
+    rule = true,
+    -- Replace entities like &amp; and &#169; with the character they stand for.
+    entity = true,
     comment = {
         -- Useful context to have when evaluating values.
         -- | text | text value of the comment node |
@@ -1082,6 +1101,12 @@ function M.html.schema()
         },
     }
     return M.base.schema({
+        structure = { type = 'boolean' },
+        list = { type = 'boolean' },
+        quote = { type = 'boolean' },
+        pre = { type = 'boolean' },
+        rule = { type = 'boolean' },
+        entity = { type = 'boolean' },
         comment = {
             record = {
                 conceal = { type = 'boolean' },

@@ -2,6 +2,12 @@
 
 ## Pre-release
 
+### Features
+
+- render plain HTML files when `html` is added to `file_types`: page structure is
+  hidden, and lists, quotes, `<pre>`, rules, headings and entities render like
+  their markdown counterparts, each switchable under `html`
+
 ## 0.1.2 (2026-10-04)
 
 ### Internal

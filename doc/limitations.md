@@ -202,3 +202,14 @@ be reached this plugin cannot not do anything special in the operator pending st
 since it effectively does not exist.
 
 This is expected behavior by `which-key`: [ISSUE #534](https://github.com/folke/which-key.nvim/issues/534)
+
+## HTML Cannot Be Reflowed
+
+Marks decorate the text of the buffer, they cannot move it. Minified HTML, or a
+page with many elements on one line, is still hard to read. A reader view for
+this is planned.
+
+## HTML Tables Are Not Rendered
+
+`<table>` is not rendered in place. Cells span lines and nest, which marks cannot
+align. Use the planned reader view for pages with tables.

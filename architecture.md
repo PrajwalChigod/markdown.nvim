@@ -264,7 +264,7 @@ capture name to renderer, and a loop.
 | ----------------------------- | ------------------------------------------------------------------------------------------ |
 | `handler/markdown.lua`        | code, dash, document, footnote, heading, list, paragraph, quote, section, table            |
 | `handler/markdown_inline.lua` | code, highlight, link, shortcut                                                            |
-| `handler/html.lua`            | comment, tag                                                                               |
+| `handler/html.lua`            | comment, tag, doctype, entity, raw                                                         |
 | `handler/yaml.lua`            | bullet, link                                                                               |
 | `handler/latex.lua`           | no query: collects formula nodes, converts them with an external tool, emits virtual lines |
 
@@ -272,6 +272,36 @@ A renderer extends `render/base.lua` and implements two methods. `setup()`
 reads config and returns false to skip the node. `run()` emits marks.
 `Base:execute` creates an instance per node and returns what `setup()`
 returned.
+
+### HTML renderers
+
+`handler/html.lua` runs for HTML inside markdown and for a whole `.html` file,
+so its renderers fall in two groups. The `tag` capture goes to
+`render/html/tag.lua`, which hides tags and applies the `html.tag` config, and
+then to one element renderer chosen by tag name. Element renderers extend
+`render/html/element.lua`, which resolves the tag name, start tag and end tag
+and offers `alone` and `hide`: a tag alone on its lines is hidden with
+`conceal_lines`, otherwise only the tag is concealed.
+
+| Renderer in `render/html/` | Applies to                              | Group     | Switch                |
+| -------------------------- | --------------------------------------- | --------- | --------------------- |
+| `doctype.lua`              | `doctype`                               | structure | `html.structure`      |
+| `page.lua`                 | `html`, `body`                          | structure | `html.structure`      |
+| `head.lua`                 | `head`, shows the title                 | structure | `html.structure`      |
+| `raw.lua`                  | `script`, `style` summaries             | structure | `html.structure`      |
+| `list.lua`                 | `ul`, `ol`, `li`                        | block     | `html.list`, `bullet` |
+| `quote.lua`                | `blockquote`                            | block     | `html.quote`, `quote` |
+| `pre.lua`                  | `pre`                                   | block     | `html.pre`, `code`    |
+| `rule.lua`                 | `hr`                                    | block     | `html.rule`, `dash`   |
+| `heading.lua`              | `h1` to `h6`, `.html` file only         | structure | `heading`             |
+| `link.lua`                 | `a` with `href`                         | block     | `link`                |
+| `entity.lua`               | `entity`, decoded by `lib/entities.lua` | block     | `html.entity`         |
+
+Structure renderers and `heading.lua` return false from `setup()` unless
+`context.format.name == 'html'`, so a markdown buffer containing `<html>` or
+`<body>` keeps those lines. Block renderers run wherever HTML appears and reuse
+the config and highlights of their markdown counterparts. `html.tag` is not
+extended: new element behaviour goes in its own renderer.
 
 ## Formats
 
@@ -343,8 +373,8 @@ The handler map is keyed by language and shared between formats.
 `format.handler(language)` looks across all formats, and if two formats name
 the same language they must name the same module; the registry asserts this.
 
-No format sets `defaults` or `scroll` yet and nothing reads `context.format`
-yet. They are there for the formats planned in part 2.
+No format sets `defaults` or `scroll` yet. They are there for the formats
+planned in part 2. `context.format` is read by the HTML structure renderers.
 
 ## Marks
 
@@ -539,9 +569,9 @@ Nothing in this part exists in the code. Do not require these modules or rely
 on these fields. When one of them is built, follow the design here and move
 its section into part 1.
 
-The goal is to render more than markdown: plain HTML files, CSV, diagrams
-inside markdown, and documents that are not text (DOCX, PDF). The format
-registry in part 1 is the first step and is done. Two components remain:
+The goal is to render more than markdown: CSV, diagrams inside markdown, and
+documents that are not text (DOCX, PDF). The format registry and plain HTML
+files, described in part 1, are done. Two components remain:
 
 | Component     | Module                          | Built together with its first user |
 | ------------- | ------------------------------- | ---------------------------------- |
@@ -596,11 +626,6 @@ add to it:
       },
   }
   ```
-
-- **`context.format` gets its first user with plain HTML files.**
-  `handler/html.lua` runs for HTML inside markdown and for a `.html` file.
-  Hiding `<html>` and `<body>` is right in the second and wrong in the first,
-  so those renderers will check `context.format.name`.
 
 - **A `source` field for model B**, read by `convert/init.lua`:
 
@@ -732,7 +757,7 @@ lua/renderer/
   core/reader.lua    NEW   HTML reader view
   core/manager.lua   CHG   size check for converted buffers
   health.lua         CHG   converters from registry
-  handler/, render/  ADD   csv and mermaid handlers, html block renderers
+  handler/, render/  ADD   csv and mermaid handlers
   settings.lua       ADD   csv, mermaid, convert, reader blocks
 ```
 

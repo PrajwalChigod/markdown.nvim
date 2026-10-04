@@ -180,6 +180,12 @@
 ---@field custom? table<string, renderer.heading.Custom>
 
 ---@class (exact) renderer.html.UserConfig: renderer.base.UserConfig
+---@field structure? boolean
+---@field list? boolean
+---@field quote? boolean
+---@field pre? boolean
+---@field rule? boolean
+---@field entity? boolean
 ---@field comment? renderer.html.comment.UserConfig
 ---@field tag? table<string, renderer.html.Tag>
 
