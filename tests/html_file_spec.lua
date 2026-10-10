@@ -30,6 +30,20 @@ local function inline(marks, row, col, text, highlight)
     })
 end
 
+---@return string
+local function dash()
+    return ('─'):rep(vim.o.columns)
+end
+
+---@param marks renderer.test.Marks
+---@param row integer
+local function rule(marks, row)
+    marks:add(row, 0, {
+        virt_text = { { dash(), 'RmDash' } },
+        virt_text_pos = 'overlay',
+    })
+end
+
 describe('html file', function()
     it('hides doctype, html and body on their own lines', function()
         setup({
@@ -219,11 +233,64 @@ describe('html file', function()
     it('hr', function()
         setup({ '<hr>' })
         local marks = util.marks()
-        marks:add(0, 0, {
-            virt_text = { { ('─'):rep(vim.o.columns), 'RmDash' } },
-            virt_text_pos = 'overlay',
-        })
-        util.assert_view(marks, { ('─'):rep(vim.o.columns) })
+        rule(marks, 0)
+        util.assert_view(marks, { dash() })
+    end)
+
+    it('hr followed by a paragraph', function()
+        setup({ '<hr>', '<p>x</p>' })
+        local marks = util.marks()
+        rule(marks, 0)
+        marks:add({ 1, 1 }, { 0, 3 }, util.conceal())
+        marks:add({ 1, 1 }, { 4, 8 }, util.conceal())
+        util.assert_view(marks, { dash(), 'x' })
+    end)
+
+    it('hr followed by a tag without an end tag', function()
+        setup({ '<hr>', '<input type="text">' })
+        local marks = util.marks()
+        rule(marks, 0)
+        util.assert_view(marks, { dash(), '<input type="text">' })
+    end)
+
+    it('hr followed by text', function()
+        setup({ '<hr>', 'text' })
+        local marks = util.marks()
+        rule(marks, 0)
+        util.assert_view(marks, { dash(), 'text' })
+    end)
+
+    it('hr between text', function()
+        setup({ 'a', '<hr>', 'b' })
+        local marks = util.marks()
+        rule(marks, 1)
+        util.assert_view(marks, { 'a', dash(), 'b' })
+    end)
+
+    it('hr followed by hr', function()
+        setup({ '<hr>', '<hr>', 'text' })
+        local marks = util.marks()
+        rule(marks, 0)
+        rule(marks, 1)
+        util.assert_view(marks, { dash(), dash(), 'text' })
+    end)
+
+    it('self closing hr followed by hr', function()
+        setup({ '<hr/>', '<hr>', 'text' })
+        local marks = util.marks()
+        rule(marks, 0)
+        rule(marks, 1)
+        util.assert_view(marks, { dash(), dash(), 'text' })
+    end)
+
+    it('hr with text before it stays source', function()
+        setup({ 'a <hr>' })
+        util.assert_view(util.marks(), { 'a <hr>' })
+    end)
+
+    it('hr with text after it stays source', function()
+        setup({ '<hr> b' })
+        util.assert_view(util.marks(), { '<hr> b' })
     end)
 
     it('blockquote', function()
