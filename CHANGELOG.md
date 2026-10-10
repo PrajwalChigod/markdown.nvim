@@ -2,6 +2,13 @@
 
 ## Pre-release
 
+## 0.2.1 (2026-10-10)
+
+### Bug Fixes
+
+- render an HTML `<hr>` as a line when another tag follows it, and leave it as
+  source when text follows it on the same line
+
 ## 0.2.0 (2026-10-04)
 
 ### Features

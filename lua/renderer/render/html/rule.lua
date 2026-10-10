@@ -18,8 +18,10 @@ function Render:enabled()
     end
     self.width = self:get_width(self.dash.width, 0)
     self.margin = self:get_width(self.dash.left_margin, self.width)
-    -- the line is drawn over the source so nothing else can share the row
-    return self.width > 0 and self:alone(self.node)
+    -- the line is drawn over the source so nothing else can share the row. Check
+    -- the tag, not the element: without an end tag, `<hr>` is parsed together
+    -- with what follows it, so the element ends on a later row or holds text
+    return self.width > 0 and self:alone(self.start_tag)
 end
 
 ---@private
